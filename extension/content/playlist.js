@@ -1,4 +1,4 @@
-/* Playlist temizleyici. Sayfada kutu göstermez; eklenti penceresinden (popup) mesajla başlatılır/durdurulur. */
+/* Playlist cleaner. Shows no box on the page; started/stopped by message from the popup. */
 (function () {
   'use strict';
   const YTX = window.YTX;
@@ -41,7 +41,7 @@
     return null;
   }
 
-  // Karo: video linkini ve tek bir üç nokta menü düğmesini içeren en büyük üst eleman
+  // Tile: the largest ancestor containing the video link and a single three-dot menu button
   function findItems() {
     const items = new Set();
     document.querySelectorAll(LINK_SELECTOR).forEach((a) => {
@@ -72,12 +72,12 @@
     await sleep(150);
     item.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
     const btn = item.querySelector(MENU_BTN_SELECTOR);
-    if (!btn) { lastReason = 'menü düğmesi yok'; return false; }
+    if (!btn) { lastReason = 'no menu button'; return false; }
     realClick(btn);
 
     const entry = await YTX.waitFor(findRemoveItem, s.p_waitMenu);
     if (!entry) {
-      lastReason = 'kaldır öğesi yok; menüde görünenler: ' + (popupTexts().join(' | ') || '(menü açılmadı)');
+      lastReason = 'no remove item; menu shows: ' + (popupTexts().join(' | ') || '(menu did not open)');
       document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
       document.body.click();
       return false;
@@ -85,7 +85,7 @@
     const leaf = [...entry.querySelectorAll('*')].filter((el) => !el.children.length && removeText.test(el.textContent))[0];
     const targets = [entry.querySelector('button, a, [role="button"], [role="menuitem"]'), leaf, entry]
       .filter((el, i, arr) => el && arr.indexOf(el) === i);
-    // YouTube öğeyi sunucuda siler ama karoyu hemen kaldırmayabilir: menünün kapanması da başarı sayılır
+    // YouTube removes the item server-side but may not drop the tile right away: the menu closing also counts as success
     const isGone = () => !item.isConnected || !visible(item) || (id && !hasVideo(id)) || !visible(entry);
     let gone = false;
     for (const t of targets) {
@@ -93,7 +93,7 @@
       gone = await YTX.waitFor(isGone, Math.min(2500, s.p_waitRemoved));
       if (gone) break;
     }
-    if (!gone) lastReason = 'tıklandı ama menü kapanmadı: ' + entry.textContent.replace(/\s+/g, ' ').trim() +
+    if (!gone) lastReason = 'clicked but menu did not close: ' + entry.textContent.replace(/\s+/g, ' ').trim() +
       ' [hedef: ' + targets.map((t) => t.tagName.toLowerCase()).join(',') + ']';
     else item.dataset.ytxpDone = '1';
     return !!gone;
@@ -114,7 +114,7 @@
       if (s.p_limit > 0 && removed >= s.p_limit) break;
       const item = nextItem();
       if (!item) {
-        if (loadTries++ >= YTX.s.p_maxLoadTries) break; // liste tembel yükleniyor: kaydırıp bekle
+        if (loadTries++ >= YTX.s.p_maxLoadTries) break; // list loads lazily: scroll and wait
         window.scrollTo(0, document.documentElement.scrollHeight);
         await sleep(YTX.s.p_scrollDelay);
         continue;

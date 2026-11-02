@@ -1,10 +1,10 @@
-/* Ayar şeması: seçenekler sayfası, popup ve içerik betikleri aynı tanımı kullanır.
- * Yeni ayar eklemek için buraya bir satır eklemek yeterlidir; seçenekler sayfası otomatik oluşur. */
+/* Settings schema: the options page, popup and content scripts all use this definition.
+ * To add a setting, add a line here; the options page is generated automatically. */
 (function (g) {
   'use strict';
   const YTX = (g.YTX = g.YTX || {});
 
-  // --- Yardımcılar (öğe üreticileri) ---
+  // --- Helpers (item builders) ---
   const tg = (key, label, def, desc, o) => ({ type: 'toggle', key, label, def, desc, ...o });
   const nm = (key, label, def, min, max, step, desc, o) => ({ type: 'number', key, label, def, min, max, step, desc, ...o });
   const rg = (key, label, def, min, max, step, desc, o) => ({ type: 'range', key, label, def, min, max, step, desc, ...o });
@@ -14,139 +14,139 @@
   const co = (key, label, def, desc, o) => ({ type: 'color', key, label, def, desc, ...o });
   const sc = (key, label, def, desc, o) => ({ type: 'shortcut', key, label, def, desc, ...o });
   const ac = (id, label, desc, o) => ({ type: 'action', id, label, desc, ...o });
-  const sec = (id, title, module, desc, items, group) => ({ id, title, module, desc, items, group: group || 'Diğer' });
-  const TOP = 'Sık kullanılanlar';
+  const sec = (id, title, module, desc, items, group) => ({ id, title, module, desc, items, group: group || 'Other' });
+  const TOP = 'Most used';
 
   const QUALITIES = [
-    ['auto', 'YouTube seçsin (otomatik)'], ['highres', 'En yüksek mevcut'], ['hd2160', '4K (2160p)'], ['hd1440', '2K (1440p)'],
+    ['auto', 'Let YouTube decide (auto)'], ['highres', 'Highest available'], ['hd2160', '4K (2160p)'], ['hd1440', '2K (1440p)'],
     ['hd1080', '1080p'], ['hd720', '720p'], ['large', '480p'], ['medium', '360p'], ['small', '240p'], ['tiny', '144p'],
   ];
 
   const SCHEMA = [
-    // ============ SIK KULLANILANLAR ============
-    sec('speed', 'Video hızı (tüm siteler)', 'speed', 'YouTube dahil her sitedeki videolarda çalışır. Kısayollar yazı alanlarındayken devre dışıdır.', [
-      tg('sp_on', 'Hız kısayollarını etkinleştir', true, '', { quick: true }),
-      sc('sp_kPreset', 'Hazır hıza geç', 'G', 'Aşağıdaki “Hazır hız” değerini uygular.'),
-      sc('sp_kReset', 'Normal hıza dön (1x)', 'R'),
-      sc('sp_kSlow', 'Yavaşlat', 'O'),
-      sc('sp_kFast', 'Hızlandır', 'P'),
-      nm('sp_preset', 'Hazır hız', 1.5, 0.1, 16, 0.05, 'Hazır hız kısayolunun uygulayacağı değer.', { quick: true }),
-      nm('sp_step', 'Yavaşlat / hızlandır adımı', 0.1, 0.05, 2, 0.05),
-      tg('sp_remember', 'Son hızı tarayıcı genelinde hatırla', true, 'Seçtiğiniz son hız, tüm sitelerde açılan her videoya otomatik uygulanır.', { quick: true }),
-      tg('sp_pitch', 'Hız değişince ses perdesini koru', true),
-      tg('sp_osd', 'Hız değişince ekranda göster', true),
+    // ============ MOST USED ============
+    sec('speed', 'Video speed (all sites)', 'speed', 'Works on videos on every site, including YouTube. Shortcuts are disabled while typing in text fields.', [
+      tg('sp_on', 'Enable speed shortcuts', true, '', { quick: true }),
+      sc('sp_kPreset', 'Jump to preset speed', 'G', 'Applies the “Preset speed” value below.'),
+      sc('sp_kReset', 'Back to normal speed (1x)', 'R'),
+      sc('sp_kSlow', 'Slower', 'O'),
+      sc('sp_kFast', 'Faster', 'P'),
+      nm('sp_preset', 'Preset speed', 1.5, 0.1, 16, 0.05, 'The value the preset shortcut applies.', { quick: true }),
+      nm('sp_step', 'Slower / faster step', 0.1, 0.05, 2, 0.05),
+      tg('sp_remember', 'Remember the last speed browser-wide', true, 'The last speed you chose is applied automatically to every video on every site.', { quick: true }),
+      tg('sp_pitch', 'Preserve pitch when speed changes', true),
+      tg('sp_osd', 'Show speed on screen when it changes', true),
     ], TOP),
 
-    sec('quality', 'Video kalitesi (YouTube)', 'enhancer', 'Seçilen kalite yoksa otomatik olarak bir alttaki en yüksek kalite seçilir (örn. 4K → 2K → 1080p → 720p…).', [
-      sl('e_quality', 'Otomatik kalite', 'auto', QUALITIES, 'Her videoda uygulanır.', { quick: true }),
-      tg('e_premium', 'Varsa yüksek bit hızlı sürümü tercih et', true, 'Seçilen çözünürlükte “Premium / yüksek bit hızı” seçeneği varsa onu kullanır, yoksa normal sürüme düşer.', { quick: true, dep: 'e_quality!=auto' }),
+    sec('quality', 'Video quality (YouTube)', 'enhancer', 'If the chosen quality is unavailable, the next highest one is picked automatically (e.g. 4K → 2K → 1080p → 720p…).', [
+      sl('e_quality', 'Automatic quality', 'auto', QUALITIES, 'Applied to every video.', { quick: true }),
+      tg('e_premium', 'Prefer the high-bitrate version when available', true, 'If a “Premium / enhanced bitrate” option exists at the chosen resolution, it is used; otherwise falls back to the regular one.', { quick: true, dep: 'e_quality!=auto' }),
     ], TOP),
 
-    sec('hide', 'Gizleme (YouTube)', 'clutter', 'Her öğe ayrı ayrı açılıp kapatılır. Ayrıntılı filtreler aşağıdaki “Diğer” bölümlerindedir.', [
-      tg('c_shorts', 'Shorts (her yerde)', false, 'Ana sayfa, arama, abonelikler, öneriler, kanal sayfaları ve sol menü.', { cls: 'hideShorts', quick: true }),
-      tg('c_topicShelves', 'Ana sayfadaki “Yeni konuları keşfedin” satırı', true, '', { quick: true }),
-      tg('c_irrelevant', 'Anketler, YouTube Oyunları ve diğer alakasız öğeler', false, '“Bu video hoşunuza gitti mi?” anketi, oyun/Playables rafları, tanıtım bantları vb. Ek raf başlıkları “Diğer › Gizleme ayrıntıları” bölümünden eklenir.', { cls: 'hideIrrelevant', quick: true }),
-      tg('m_repeat', 'Tekrar eden videolar', true, 'Birkaç kez gösterilmiş önerileri gizler.', { quick: true }),
-      nm('r_max', 'Kaç gösterimden sonra gizlensin', 3, 1, 50, 1, '', { dep: 'm_repeat' }),
-      tg('c_mixes', 'YouTube Mix', true, '“Your Mix” ve “Mix – ...” (RDCLAK resmi listeler hariç).', { quick: true }),
-      tg('c_coursePodcast', 'Kurs ve podcast olarak çıkan playlistler', false, '', { quick: true }),
-      tg('c_inProgress', 'Daha önce izlenmiş videolar', true, 'Küçük resminde izleme çubuğu olanlar. Oran aralığı “Diğer › Gizleme ayrıntıları”nda.', { quick: true }),
-      tg('c_live', 'Şu an süren canlı yayınlar (yalnızca Abonelikler)', true, '', { quick: true }),
-      tg('c_liveEnded', 'Bitmiş canlı yayınlar (yalnızca Abonelikler)', false, '', { quick: true }),
+    sec('hide', 'Hiding (YouTube)', 'clutter', 'Each item can be turned on or off separately. Detailed filters are in the “Other” sections below.', [
+      tg('c_shorts', 'Shorts (everywhere)', false, 'Home, search, subscriptions, recommendations, channel pages and the side menu.', { cls: 'hideShorts', quick: true }),
+      tg('c_topicShelves', '“Explore new topics” row on the home page', true, '', { quick: true }),
+      tg('c_irrelevant', 'Surveys, YouTube Playables and other irrelevant items', false, 'The “Did you like this video?” survey, game/Playables shelves, promo strips, etc. Extra shelf titles can be added under “Other › Hiding details”.', { cls: 'hideIrrelevant', quick: true }),
+      tg('m_repeat', 'Repeated videos', true, 'Hides recommendations that have already been shown several times.', { quick: true }),
+      nm('r_max', 'Hide after how many impressions', 3, 1, 50, 1, '', { dep: 'm_repeat' }),
+      tg('c_mixes', 'YouTube Mix', true, '“Your Mix” and “Mix – ...” (official RDCLAK lists excluded).', { quick: true }),
+      tg('c_coursePodcast', 'Playlists shown as courses and podcasts', false, '', { quick: true }),
+      tg('c_inProgress', 'Previously watched videos', true, 'Those with a progress bar on the thumbnail. The percentage range is under “Other › Hiding details”.', { quick: true }),
+      tg('c_live', 'Ongoing live streams (Subscriptions only)', true, '', { quick: true }),
+      tg('c_liveEnded', 'Ended live streams (Subscriptions only)', false, '', { quick: true }),
     ], TOP),
 
-    // ============ DİĞER ============
-    sec('clutter', 'Gizleme ayrıntıları', 'clutter', 'Gizleme bölümündeki kuralların inceliklerini ve ek filtreleri ayarlar.', [
-      rg('c_progressMin', 'En az izlenme oranı (%)', 1, 1, 100, 1, 'Bu orandan az izlenmişse “izlenmiş” sayılmaz.', { dep: 'c_inProgress' }),
-      rg('c_progressMax', 'En çok izlenme oranı (%)', 100, 1, 100, 1, 'Sadece tamamen izlenenleri gizlemek için min=90 yapın.', { dep: 'c_inProgress' }),
-      tg('c_upcoming', 'Yaklaşan yayın / prömiyerleri gizle', false),
-      tg('c_membersOnly', 'Üyelere özel videoları gizle', false),
-      nm('c_minDuration', 'Şundan kısa videoları gizle (sn)', 0, 0, 36000, 10, '0 = kapalı.'),
-      nm('c_maxDuration', 'Şundan uzun videoları gizle (sn)', 0, 0, 360000, 60, '0 = kapalı.'),
-      ta('c_keywords', 'Başlıkta geçen anahtar kelimeler', '', 'Her satıra bir kelime. /regex/i biçimi de desteklenir. Eşleşen karolar gizlenir.'),
-      ta('c_channels', 'Gizlenecek kanallar', '', 'Her satıra bir kanal adı (büyük/küçük harf fark etmez).'),
-      ta('c_shelfTitles', 'Alakasız sayılacak ek raf başlıkları', 'playables\nyoutube oyun\nyoutube games\nilgili aramalar\nrelated searches', 'Her satıra bir başlık parçası. “Anketler, Oyunlar ve alakasız öğeler” açıkken, başlığı bunları içeren raflar gizlenir.', { dep: 'c_irrelevant' }),
-      tg('c_dim', 'Gizlemek yerine soluklaştır', false, 'Karolar kaybolmaz, yalnızca silikleşir.', { cls: 'dimClutter' }),
-      ta('c_excludePaths', 'Dokunulmayacak sayfalar', '/feed/history\n/playlist\n/feed/library\n/feed/you', 'Her satıra bir yol öneki. Bu sayfalarda hiçbir şey gizlenmez.'),
+    // ============ OTHER ============
+    sec('clutter', 'Hiding details', 'clutter', 'Fine-tune the rules in the Hiding section and add extra filters.', [
+      rg('c_progressMin', 'Minimum watched percentage (%)', 1, 1, 100, 1, 'Videos watched less than this are not counted as “watched”.', { dep: 'c_inProgress' }),
+      rg('c_progressMax', 'Maximum watched percentage (%)', 100, 1, 100, 1, 'Set the minimum to 90 to hide only fully watched videos.', { dep: 'c_inProgress' }),
+      tg('c_upcoming', 'Hide upcoming streams / premieres', false),
+      tg('c_membersOnly', 'Hide members-only videos', false),
+      nm('c_minDuration', 'Hide videos shorter than (sec)', 0, 0, 36000, 10, '0 = off.'),
+      nm('c_maxDuration', 'Hide videos longer than (sec)', 0, 0, 360000, 60, '0 = off.'),
+      ta('c_keywords', 'Keywords in the title', '', 'One keyword per line. /regex/i format is also supported. Matching tiles are hidden.'),
+      ta('c_channels', 'Channels to hide', '', 'One channel name per line (case-insensitive).'),
+      ta('c_shelfTitles', 'Extra shelf titles to treat as irrelevant', 'playables\nyoutube oyun\nyoutube games\nilgili aramalar\nrelated searches', 'One title fragment per line. When “Surveys, Playables and irrelevant items” is on, shelves whose title contains these are hidden.', { dep: 'c_irrelevant' }),
+      tg('c_dim', 'Dim instead of hide', false, 'Tiles do not disappear, they are only faded.', { cls: 'dimClutter' }),
+      ta('c_excludePaths', 'Pages to leave untouched', '/feed/history\n/playlist\n/feed/library\n/feed/you', 'One path prefix per line. Nothing is hidden on these pages.'),
     ]),
 
-    sec('repeat', 'Tekrar gizleyici ayrıntıları', 'repeat', 'Hangi sayfalarda ve nasıl sayılacağı.', [
-      tg('r_home', 'Ana sayfada uygula', true),
-      tg('r_watch', 'İzleme sayfası önerilerinde uygula', true),
-      tg('r_search', 'Arama sonuçlarında uygula', false),
-      tg('r_subs', 'Abonelikler sayfasında uygula', false),
-      tg('r_shorts', 'Shorts’u da say', true),
-      rg('r_visibility', 'Gösterim sayılma eşiği (%)', 10, 1, 100, 1, 'Karonun en az bu kadarı ekranda görününce “gösterildi” sayılır.'),
-      nm('r_ageDays', 'Kayıt saklama süresi (gün)', 30, 1, 365, 1, 'Daha eski kayıtlar silinir.'),
-      nm('r_maxEntries', 'En fazla kayıt sayısı', 20000, 500, 200000, 500),
-      tg('r_dim', 'Gizlemek yerine soluklaştır', false, '', { cls: 'dimRepeat' }),
-      ac('repeatStats', 'İstatistik', 'Kaç videonun sayıldığını ve kaçının gizlendiğini gösterir.'),
-      ac('repeatReset', 'Sayaçları sıfırla', 'Tüm gösterim sayaçlarını siler.', { danger: true }),
+    sec('repeat', 'Repeat hider details', 'repeat', 'Which pages it applies to and how impressions are counted.', [
+      tg('r_home', 'Apply on the home page', true),
+      tg('r_watch', 'Apply to watch-page recommendations', true),
+      tg('r_search', 'Apply to search results', false),
+      tg('r_subs', 'Apply on the Subscriptions page', false),
+      tg('r_shorts', 'Count Shorts too', true),
+      rg('r_visibility', 'Impression visibility threshold (%)', 10, 1, 100, 1, 'A tile counts as “shown” once at least this much of it is on screen.'),
+      nm('r_ageDays', 'Record retention (days)', 30, 1, 365, 1, 'Older records are deleted.'),
+      nm('r_maxEntries', 'Maximum number of records', 20000, 500, 200000, 500),
+      tg('r_dim', 'Dim instead of hide', false, '', { cls: 'dimRepeat' }),
+      ac('repeatStats', 'Statistics', 'Shows how many videos have been counted and how many are hidden.'),
+      ac('repeatReset', 'Reset counters', 'Deletes all impression counters.', { danger: true }),
     ]),
 
-    sec('playlist', 'Playlist temizleyici', 'playlist', 'Başlatmak için bir playlist sayfasındayken eklenti simgesine tıklayın ve “Listeyi temizle” düğmesine basın.', [
-      tg('p_confirm', 'Başlamadan önce onay iste', true),
-      nm('p_limit', 'En fazla kaldırılacak video', 0, 0, 100000, 10, '0 = sınırsız. Bu sayıya ulaşınca durur.'),
-      nm('p_stepDelay', 'İki silme arası bekleme (ms)', 700, 100, 10000, 50),
-      nm('p_waitMenu', 'Menü öğesi için azami bekleme (ms)', 3000, 500, 15000, 100),
-      nm('p_waitRemoved', 'Karonun kalkması için azami bekleme (ms)', 4000, 500, 20000, 100),
-      nm('p_scrollDelay', 'Yeni video yükleme beklemesi (ms)', 1200, 300, 10000, 100),
-      nm('p_maxLoadTries', 'Yeni video için kaydırma denemesi', 5, 1, 50, 1),
-      nm('p_maxFailStreak', 'Üst üste kaç hatada dursun', 3, 1, 50, 1),
-      tx('p_extraText', 'Ek “kaldır” kelimeleri', '', 'Başka dil için | ile ayırarak yazın. Örn: удалить|remover'),
+    sec('playlist', 'Playlist cleaner', 'playlist', 'To start it, open a playlist page, click the extension icon and press “Clear list”.', [
+      tg('p_confirm', 'Ask for confirmation before starting', true),
+      nm('p_limit', 'Maximum videos to remove', 0, 0, 100000, 10, '0 = unlimited. Stops when this number is reached.'),
+      nm('p_stepDelay', 'Delay between removals (ms)', 700, 100, 10000, 50),
+      nm('p_waitMenu', 'Max wait for the menu item (ms)', 3000, 500, 15000, 100),
+      nm('p_waitRemoved', 'Max wait for the tile to disappear (ms)', 4000, 500, 20000, 100),
+      nm('p_scrollDelay', 'Wait for new videos to load (ms)', 1200, 300, 10000, 100),
+      nm('p_maxLoadTries', 'Scroll attempts for new videos', 5, 1, 50, 1),
+      nm('p_maxFailStreak', 'Stop after how many failures in a row', 3, 1, 50, 1),
+      tx('p_extraText', 'Extra “remove” words', '', 'For other languages, separate with |. E.g. удалить|remover'),
     ]),
 
-    sec('player', 'Oynatıcı (YouTube)', 'enhancer', 'Ses, altyazı ve otomatik davranışlar.', [
-      sl('e_volMode', 'Varsayılan ses', 'off', [['off', 'YouTube’a bırak'], ['fixed', 'Sabit ses'], ['remember', 'Son kullandığımı hatırla']]),
-      rg('e_volume', 'Sabit ses (%)', 50, 0, 100, 1, '', { dep: 'e_volMode=fixed' }),
-      sl('e_captions', 'Altyazı', 'off', [['off', 'YouTube’a bırak'], ['on', 'Hep aç'], ['never', 'Hep kapat']]),
-      tx('e_captionLang', 'Altyazı dili kodu', '', 'Boş = varsayılan. Örn: tr, en, de', { dep: 'e_captions=on' }),
-      tg('e_noAutonext', 'Sonraki video otomatik oynatmayı kapat', false),
-      tg('e_noAutoplay', 'Video yüklenince otomatik başlatma (duraklat)', false, 'Yeni sekmede açılan videoyu duraklatır.'),
-      tg('e_noAutoplayList', 'Playlist’lerde bu kuralı uygulama', true, '', { dep: 'e_noAutoplay' }),
-      tg('e_pauseHidden', 'Sekme gizlenince duraklat', false),
-      tg('e_resumeVisible', 'Sekme görününce devam ettir', false, '', { dep: 'e_pauseHidden' }),
-      tg('e_pauseOthers', 'Başka sekmedeki YouTube’u duraklat', false, 'Yeni bir video başlayınca diğer sekmelerdeki videolar durur.'),
-      tg('e_autoLoop', 'Videoları otomatik döngüye al', false),
-      tg('e_autoTheater', 'Sinema (geniş) modunda başlat', false),
-      tg('e_expandDesc', 'Açıklamayı otomatik genişlet', false),
-      tg('e_focus', 'Oynatıcıya odaklan', false, 'Klavye kısayollarının hemen çalışması için.'),
+    sec('player', 'Player (YouTube)', 'enhancer', 'Volume, captions and automatic behaviors.', [
+      sl('e_volMode', 'Default volume', 'off', [['off', 'Leave to YouTube'], ['fixed', 'Fixed volume'], ['remember', 'Remember the last one I used']]),
+      rg('e_volume', 'Fixed volume (%)', 50, 0, 100, 1, '', { dep: 'e_volMode=fixed' }),
+      sl('e_captions', 'Captions', 'off', [['off', 'Leave to YouTube'], ['on', 'Always on'], ['never', 'Always off']]),
+      tx('e_captionLang', 'Caption language code', '', 'Empty = default. E.g. tr, en, de', { dep: 'e_captions=on' }),
+      tg('e_noAutonext', 'Turn off autoplay of the next video', false),
+      tg('e_noAutoplay', 'Do not autoplay when a video loads (pause)', false, 'Pauses a video opened in a new tab.'),
+      tg('e_noAutoplayList', 'Do not apply this rule in playlists', true, '', { dep: 'e_noAutoplay' }),
+      tg('e_pauseHidden', 'Pause when the tab is hidden', false),
+      tg('e_resumeVisible', 'Resume when the tab becomes visible', false, '', { dep: 'e_pauseHidden' }),
+      tg('e_pauseOthers', 'Pause YouTube in other tabs', false, 'When a new video starts, videos in other tabs are paused.'),
+      tg('e_autoLoop', 'Loop videos automatically', false),
+      tg('e_autoTheater', 'Start in theater (wide) mode', false),
+      tg('e_expandDesc', 'Expand the description automatically', false),
+      tg('e_focus', 'Focus the player', false, 'So keyboard shortcuts work right away.'),
     ]),
 
-    sec('page', 'Sayfa düzeni (YouTube)', 'enhancer', 'Arayüzün istenmeyen parçalarını gizle.', [
-      tg('h_comments', 'Yorumları gizle', false, '', { cls: 'hideComments' }),
-      tg('h_related', 'Önerilen videolar kenar çubuğunu gizle', false, '', { cls: 'hideRelated' }),
-      tg('h_chat', 'Canlı sohbeti gizle', false, '', { cls: 'hideChat' }),
-      tg('h_endcards', 'Bitiş kartlarını / ekranını gizle', false, '', { cls: 'hideEndCards' }),
-      tg('h_cards', 'Bilgi kartları, notlar ve kanal logosunu gizle', false, '', { cls: 'hideCards' }),
-      tg('h_watermark', 'Oynatıcıdaki kanal filigranını gizle', false, '', { cls: 'hideWatermark' }),
-      tg('h_merch', 'Ürün / bağış / bilet raflarını gizle', false, '', { cls: 'hideMerch' }),
-      tg('h_info', 'Bilgi panellerini gizle', false, 'Konu açıklama kutuları vb.', { cls: 'hideInfoPanel' }),
-      tg('h_promos', 'Premium ve diğer tanıtım bantlarını gizle', false, '', { cls: 'hidePromos' }),
-      tg('h_ambient', 'Ambient (ışık yansıması) modunu kapat', false, '', { cls: 'hideAmbient' }),
-      tg('h_autoplayBtn', 'Otomatik oynat düğmesini gizle', false, '', { cls: 'hideAutoplayBtn' }),
-      tg('h_notif', 'Bildirim sayısı rozetini gizle', false, '', { cls: 'hideNotif' }),
-      tg('h_voice', 'Sesli arama düğmesini gizle', false, '', { cls: 'hideVoice' }),
-      nm('h_cols', 'Ana sayfada satır başına video', 0, 0, 10, 1, '0 = YouTube’un kendi düzeni.'),
-      tg('h_accentOn', 'İlerleme çubuğu rengini özelleştir', false),
-      co('h_accent', 'İlerleme çubuğu rengi', '#ff0000', '', { dep: 'h_accentOn' }),
+    sec('page', 'Page layout (YouTube)', 'enhancer', 'Hide unwanted parts of the interface.', [
+      tg('h_comments', 'Hide comments', false, '', { cls: 'hideComments' }),
+      tg('h_related', 'Hide the recommended videos sidebar', false, '', { cls: 'hideRelated' }),
+      tg('h_chat', 'Hide live chat', false, '', { cls: 'hideChat' }),
+      tg('h_endcards', 'Hide end cards / end screen', false, '', { cls: 'hideEndCards' }),
+      tg('h_cards', 'Hide info cards, notes and the channel logo', false, '', { cls: 'hideCards' }),
+      tg('h_watermark', 'Hide the channel watermark in the player', false, '', { cls: 'hideWatermark' }),
+      tg('h_merch', 'Hide merch / donation / ticket shelves', false, '', { cls: 'hideMerch' }),
+      tg('h_info', 'Hide info panels', false, 'Topic description boxes, etc.', { cls: 'hideInfoPanel' }),
+      tg('h_promos', 'Hide Premium and other promo strips', false, '', { cls: 'hidePromos' }),
+      tg('h_ambient', 'Turn off ambient (glow) mode', false, '', { cls: 'hideAmbient' }),
+      tg('h_autoplayBtn', 'Hide the autoplay button', false, '', { cls: 'hideAutoplayBtn' }),
+      tg('h_notif', 'Hide the notification count badge', false, '', { cls: 'hideNotif' }),
+      tg('h_voice', 'Hide the voice search button', false, '', { cls: 'hideVoice' }),
+      nm('h_cols', 'Videos per row on the home page', 0, 0, 10, 1, '0 = YouTube’s own layout.'),
+      tg('h_accentOn', 'Customize the progress bar color', false),
+      co('h_accent', 'Progress bar color', '#ff0000', '', { dep: 'h_accentOn' }),
     ]),
 
-    sec('keys', 'Ses kısayolları (YouTube)', 'enhancer', 'Kutuya tıklayıp tuşa basın. Esc veya Backspace kısayolu temizler. (Hız kısayolları en üstteki “Video hızı” bölümündedir.)', [
-      tg('s_on', 'Kısayolları etkinleştir', true),
-      sc('s_volUp', 'Sesi artır', ''),
-      sc('s_volDown', 'Sesi azalt', ''),
-      nm('s_volStep', 'Ses kısayolu adımı (%)', 5, 1, 25, 1),
+    sec('keys', 'Volume shortcuts (YouTube)', 'enhancer', 'Click the box and press a key. Esc or Backspace clears the shortcut. (Speed shortcuts are in the “Video speed” section at the top.)', [
+      tg('s_on', 'Enable shortcuts', true),
+      sc('s_volUp', 'Volume up', ''),
+      sc('s_volDown', 'Volume down', ''),
+      nm('s_volStep', 'Volume shortcut step (%)', 5, 1, 25, 1),
     ]),
 
-    sec('general', 'Genel', null, 'Eklentinin ana anahtarı ve gelişmiş ayarlar.', [
-      tg('enabled', 'Eklenti etkin', true, 'Kapalıyken hiçbir özellik çalışmaz.', { quick: true }),
-      tg('x_debug', 'Hata ayıklama günlüğü', false, 'Tarayıcı konsoluna [YTX] günlükleri yazar.'),
-      nm('x_scanMs', 'Tarama aralığı (ms)', 250, 50, 3000, 50, 'Sayfa değişikliklerinin ne sıklıkla taranacağı. Düşük = hızlı ama daha fazla CPU.'),
+    sec('general', 'General', null, 'The extension’s master switch and advanced settings.', [
+      tg('enabled', 'Extension enabled', true, 'When off, no feature runs.', { quick: true }),
+      tg('x_debug', 'Debug log', false, 'Writes [YTX] logs to the browser console.'),
+      nm('x_scanMs', 'Scan interval (ms)', 250, 50, 3000, 50, 'How often page changes are scanned. Lower = faster but uses more CPU.'),
     ]),
   ];
 
-  // --- Türetilmiş veriler ---
+  // --- Derived data ---
   const DEFAULTS = {};
   const ITEMS = {};
   for (const s of SCHEMA) for (const it of s.items) {
@@ -154,7 +154,7 @@
     if (it.key) { DEFAULTS[it.key] = it.def; ITEMS[it.key] = it; }
   }
 
-  // Tuş kombinasyonu: "Ctrl+Alt+Shift+Meta+Tuş". Tek karakterli tuşlar büyük harfe çevrilir.
+  // Key combo: "Ctrl+Alt+Shift+Meta+Key". Single-character keys are uppercased.
   function comboFromEvent(e) {
     const k = e.key;
     if (['Control', 'Shift', 'Alt', 'Meta', 'Dead', 'Unidentified'].includes(k)) return '';
@@ -168,7 +168,7 @@
     return parts.join('+');
   }
 
-  // dep: "anahtar" | "anahtar=değer" | "anahtar!=değer"
+  // dep: "key" | "key=value" | "key!=value"
   function depOk(item, s) {
     if (!item.dep) return true;
     const m = item.dep.match(/^([^!=]+)(!?=)?(.*)$/);

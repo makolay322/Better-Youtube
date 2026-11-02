@@ -1,19 +1,19 @@
-/* Sayfa dünyasında (MAIN world) çalışır: YouTube oynatıcı API'sine yalnızca burada erişilebilir.
- * İçerik betiği window.postMessage ile komut gönderir, yanıtı aynı yolla alır. */
+/* Runs in the page world (MAIN world): the YouTube player API is only reachable here.
+ * The content script sends commands via window.postMessage and receives the reply the same way. */
 (function () {
   'use strict';
-  // Yüksekten alçağa kalite sırası; seçilen yoksa aşağıya doğru ilk mevcut olan seçilir (4K → 2K → 1080p → ...)
+  // Quality order from high to low; if the chosen one is missing, the first available below it is picked (4K → 2K → 1080p → ...)
   const ORDER = ['highres', 'hd2880', 'hd2160', 'hd1440', 'hd1080', 'hd720', 'large', 'medium', 'small', 'tiny'];
   const PREMIUM = /premium|enhanced|yüksek bit|high bitrate|bitrate/i;
   const player = () => document.getElementById('movie_player');
 
   const commands = {
-    // q: istenen kalite, premium: aynı çözünürlükte yüksek bit hızlı sürüm varsa onu seç
+    // q: requested quality, premium: pick the high-bitrate version if one exists at the same resolution
     setQuality(p, q, premium) {
       if (!p.setPlaybackQualityRange || q === 'auto') return { ok: false };
       const levels = ((p.getAvailableQualityLevels && p.getAvailableQualityLevels()) || []).filter((l) => l !== 'auto');
       const data = (p.getAvailableQualityData && p.getAvailableQualityData()) || [];
-      if (!levels.length && !data.length) return { ok: false, wait: true }; // oynatıcı henüz hazır değil
+      if (!levels.length && !data.length) return { ok: false, wait: true }; // player not ready yet
       const have = (l) => levels.includes(l) || data.some((d) => d.quality === l && d.isPlayable !== false);
       let pick;
       if (q === 'highres') pick = ORDER.find(have) || levels[0];

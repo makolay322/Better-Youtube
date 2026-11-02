@@ -1,8 +1,8 @@
-/* YouTube oynatıcı ayarları: ses, kalite, altyazı, otomatik davranışlar, sayfa düzeni. */
+/* YouTube player settings: volume, quality, captions, automatic behaviors, page layout. */
 (function () {
   'use strict';
   const YTX = window.YTX;
-  const STATE_KEY = 'ytxState'; // son ses (ayarlardan ayrı tutulur)
+  const STATE_KEY = 'ytxState'; // last volume (kept separate from settings)
 
   let state = { volume: null };
   let started = false;
@@ -11,13 +11,13 @@
   let lastVideoKey = '';
   let qualityToken = 0;
 
-  // ---------- Yardımcılar ----------
+  // ---------- Helpers ----------
   const $ = (sel, root) => (root || document).querySelector(sel);
   const player = () => document.getElementById('movie_player');
   const video = () => $('#movie_player video.html5-main-video') || $('#movie_player video') || $('video');
   const onWatch = () => location.pathname === '/watch' || location.pathname.startsWith('/shorts');
 
-  // Sayfa dünyasındaki oynatıcı API'si için köprü
+  // Bridge to the player API in the page world
   let seq = 0;
   const waiting = new Map();
   window.addEventListener('message', (e) => {
@@ -34,7 +34,7 @@
       setTimeout(() => { if (waiting.delete(id)) resolve(null); }, 1500);
     });
   }
-  const saveState = () => { try { chrome.storage.local.set({ [STATE_KEY]: state }); } catch (e) { /* uzantı yeniden yüklendi */ } };
+  const saveState = () => { try { chrome.storage.local.set({ [STATE_KEY]: state }); } catch (e) { /* extension was reloaded */ } };
 
   // ---------- Ses ----------
   function setVolume(pct) {
@@ -47,7 +47,7 @@
   const volNow = () => { const v = video(); return v ? Math.round(v.volume * 100) : 0; };
 
   // ---------- Kalite ----------
-  // Oynatıcı API'si video yüklendikten bir süre sonra hazır olur; hazır olana kadar birkaç kez dener.
+  // The player API becomes ready some time after the video loads; retries a few times until then.
   async function applyQuality() {
     const s = YTX.s;
     if (s.e_quality === 'auto') return;
@@ -61,7 +61,7 @@
     }
   }
 
-  // ---------- Videoya özel varsayılanlar ----------
+  // ---------- Per-video defaults ----------
   function applyDefaults() {
     const v = video(), s = YTX.s;
     if (!v || !onWatch()) return;
@@ -73,7 +73,7 @@
     if (s.e_autoLoop) v.loop = true;
     if (s.e_noAutonext) autoNextOff();
     if (s.e_noAutoplay && !(s.e_noAutoplayList && /[?&]list=/.test(location.search))) {
-      // Yeni video yüklenir yüklenmez duraklat; kullanıcı araya girerse (tıklama/tuş) dokunma
+      // Pause as soon as a new video loads; leave it alone if the user steps in (click/key)
       [50, 500].forEach((ms) => setTimeout(() => { if (!v.paused && !v.dataset.ytxUserPlayed) v.pause(); }, ms));
     }
     if (s.e_autoTheater) setTheater(true);
@@ -96,7 +96,7 @@
     setTimeout(() => { for (const t of tries) { const b = t(); if (b && YTX.visible(b)) { b.click(); break; } } }, 1200);
   }
 
-  // ---------- Sayfa değişkenleri (sütun sayısı, vurgu rengi) ----------
+  // ---------- Page variables (column count, accent color) ----------
   function applyVars() {
     const s = YTX.s, root = document.documentElement;
     root.classList.toggle('ytx-gridOn', s.h_cols > 0);
@@ -122,7 +122,7 @@
     else if (s.s_volDown && s.s_volDown === combo) { e.preventDefault(); e.stopPropagation(); setVolume(volNow() - s.s_volStep); }
   }
 
-  // ---------- Video olayları ----------
+  // ---------- Video events ----------
   function onVideoEvent(e) {
     const v = e.target;
     if (!(v instanceof HTMLVideoElement) || !v.classList.contains('html5-main-video')) return;

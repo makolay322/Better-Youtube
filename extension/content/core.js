@@ -1,4 +1,4 @@
-/* Çekirdek: ayar yükleme, modül yaşam döngüsü, ortak yardımcılar. */
+/* Core: settings loading, module lifecycle, shared helpers. */
 (function () {
   'use strict';
   const YTX = window.YTX;
@@ -6,11 +6,11 @@
 
   const modules = [];
   YTX.register = (m) => modules.push(m); // { id, start(), stop(), update() }
-  // Yalnızca açma/kapama anahtarı olan modüller (ör. m_repeat) kendi anahtarına bakar
+  // Modules that only have an on/off switch (e.g. m_repeat) check their own key
   YTX.isActive = (id) => !!(YTX.s.enabled && (!(('m_' + id) in YTX.DEFAULTS) || YTX.s['m_' + id]));
   YTX.log = (...a) => { if (YTX.s.x_debug) console.log('[YTX]', ...a); };
 
-  // --- Yardımcılar ---
+  // --- Helpers ---
   YTX.sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   YTX.visible = (el) => !!(el && (el.offsetParent || el.getClientRects().length));
   YTX.lines = (text) => String(text || '').split('\n').map((x) => x.trim()).filter(Boolean);
@@ -24,22 +24,22 @@
     }
     return null;
   };
-  // YouTube bazı düğmelerde yalnızca tam işaretçi olay dizisine tepki verir
+  // YouTube reacts to some buttons only with a full pointer event sequence
   YTX.realClick = (el) => {
     ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click'].forEach((type) => {
       const Ctor = type.startsWith('pointer') ? PointerEvent : MouseEvent;
       el.dispatchEvent(new Ctor(type, { bubbles: true, cancelable: true, composed: true, view: window, button: 0 }));
     });
   };
-  // Ayar metnindeki satırlardan eşleştirici üretir (/regex/i veya düz metin)
+  // Builds a matcher from the lines of a setting (/regex/i or plain text)
   YTX.matchers = (text) => YTX.lines(text).map((l) => {
     const m = l.match(/^\/(.+)\/([a-z]*)$/);
-    if (m) { try { const re = new RegExp(m[1], m[2] || 'i'); return (t) => re.test(t); } catch (e) { /* düz metin say */ } }
+    if (m) { try { const re = new RegExp(m[1], m[2] || 'i'); return (t) => re.test(t); } catch (e) { /* treat as plain text */ } }
     const low = l.toLowerCase();
     return (t) => t.toLowerCase().includes(low);
   });
 
-  // --- Ortak DOM gözlemcisi (tek MutationObserver, kısıtlı çağrı) ---
+  // --- Shared DOM observer (single MutationObserver, throttled) ---
   const mutateCbs = new Set();
   let mo = null, moTimer = null;
   function fireMutate() { moTimer = null; mutateCbs.forEach((fn) => { try { fn(); } catch (e) { console.error('[YTX]', e); } }); }
@@ -59,7 +59,7 @@
   YTX.offNav = (fn) => navCbs.delete(fn);
   window.addEventListener('yt-navigate-finish', () => { navCbs.forEach((fn) => { try { fn(); } catch (e) { console.error('[YTX]', e); } }); schedule(); });
 
-  // --- Ana sayfa ayar sınıfları (<html class="ytx-...">) ---
+  // --- Root settings classes (<html class="ytx-...">) ---
   function applyClasses() {
     const root = document.documentElement;
     for (const it of Object.values(YTX.ITEMS)) {
@@ -69,7 +69,7 @@
     }
   }
 
-  // --- Modül yaşam döngüsü ---
+  // --- Module lifecycle ---
   const running = new Set();
   function refresh() {
     applyClasses();
@@ -79,7 +79,7 @@
         if (should && !running.has(m.id)) { running.add(m.id); m.start(); }
         else if (!should && running.has(m.id)) { running.delete(m.id); m.stop(); }
         else if (should && m.update) m.update();
-      } catch (e) { console.error('[YTX] modül hatası', m.id, e); }
+      } catch (e) { console.error('[YTX] module error', m.id, e); }
     }
   }
 

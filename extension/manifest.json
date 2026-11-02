@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Better Youtube",
   "short_name": "Better Youtube",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Configurable YouTube enhancer: site-wide video speed hotkeys, auto quality with fallback, fine-grained hiding options, repeat hider and playlist cleaner.",
   "minimum_chrome_version": "105",
   "permissions": [

@@ -1,14 +1,14 @@
-/* Tekrar eden video gizleyici (youtube-repeat-hider.user.js'in eklenti sürümü). */
+/* Repeated video hider. */
 (function () {
   'use strict';
   const YTX = window.YTX;
   const STORE = 'repeatCounts';
   const ATTR = 'data-ytx-repeat';
 
-  // "Oturum" = her sayfa gösterimi. Aynı sayfa gösteriminde tekrar görünen video bir kez sayılır.
+  // "Session" = each page view. A video that reappears in the same page view is counted once.
   const sessionSeen = new Set();
   let counts = {};          // { id: { c, t } }
-  const pending = new Map(); // id -> eklenecek fark (0 = yalnızca son görülme zamanını tazele)
+  const pending = new Map(); // id -> delta to add (0 = only refresh the last-seen time)
   let saveTimer = null, io = null, loaded = false;
 
   const INNER_TILE_SELECTOR = [
@@ -22,7 +22,7 @@
     return (p === '/' && s.r_home) || (p === '/watch' && s.r_watch) || (p === '/results' && s.r_search) ||
       (p === '/feed/subscriptions' && s.r_subs);
   };
-  // YouTube önbelleğinde DOM'da kalan, şu an gösterilmeyen sayfalar sayılmaz/gizlenmez
+  // Pages cached in YouTube's DOM but not currently shown are neither counted nor hidden
   const excludedArea = () => (YTX.s.r_subs ? 'ytd-browse[hidden]' : 'ytd-browse[page-subtype="subscriptions"], ytd-browse[hidden]');
   const currentVideoId = () => (location.pathname === '/watch' ? new URLSearchParams(location.search).get('v') : null);
 
@@ -46,7 +46,7 @@
     return tiles;
   }
 
-  // Başka sekmelerin yazdıklarını ezmemek için kaydederken depoyu yeniden okuyup farkları uygular.
+  // To avoid overwriting other tabs' writes, re-reads the store when saving and applies the deltas.
   async function flush() {
     saveTimer = null;
     if (!pending.size) return;
@@ -97,7 +97,7 @@
     const seen = sessionSeen.has(id), rec = counts[id];
     const hide = !seen && !!rec && rec.c >= YTX.s.r_max;
     tile.toggleAttribute(ATTR, hide);
-    if (hide) { pending.set(id, pending.get(id) || 0); scheduleSave(); } // kaydı canlı tut
+    if (hide) { pending.set(id, pending.get(id) || 0); scheduleSave(); } // keep the record alive
     if (hide || seen) {
       if (tile.dataset.ytxrObs) { io.unobserve(tile); delete tile.dataset.ytxrObs; }
     } else if (tile.dataset.ytxrObs !== id) {
@@ -112,7 +112,7 @@
   }
   function clearHidden() { document.querySelectorAll('[' + ATTR + ']').forEach((el) => el.removeAttribute(ATTR)); }
 
-  function onNav() { // yeni sayfa gösterimi = yeni oturum
+  function onNav() { // new page view = new session
     flush();
     sessionSeen.clear();
     io.disconnect();
@@ -120,7 +120,7 @@
     scan();
   }
   const onPageHide = () => { flush(); };
-  // Seçenekler sayfasından sıfırlama / başka sekmeden güncelleme
+  // Reset from the options page / update from another tab
   const onStorage = (ch, area) => {
     if (area !== 'local' || !ch[STORE]) return;
     counts = ch[STORE].newValue || {};

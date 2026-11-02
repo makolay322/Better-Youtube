@@ -1,4 +1,4 @@
-/* --- Gereksiz içerik / tekrar gizleyici --- */
+/* --- Clutter / repeat hider --- */
 html:not(.ytx-dimClutter) [data-ytx-clutter] { display: none !important; }
 html.ytx-dimClutter [data-ytx-clutter] { opacity: .15; transition: opacity .15s; }
 html.ytx-dimClutter [data-ytx-clutter]:hover { opacity: 1; }
@@ -25,7 +25,7 @@ html.ytx-hideShorts ytd-mini-guide-entry-renderer:has(a[href^="/shorts"]),
 html.ytx-hideShorts ytd-reel-item-renderer,
 html.ytx-hideShorts yt-tab-shape[tab-title="Shorts"] { display: none !important; }
 
-/* Anketler, oyunlar (Playables) ve diğer alakasız öğeler (metin tabanlı olanlar clutter.js ile işaretlenir) */
+/* Surveys, games (Playables) and other irrelevant items (text-based ones are marked by clutter.js) */
 html.ytx-hideIrrelevant ytd-inline-survey-renderer,
 html.ytx-hideIrrelevant ytd-feed-nudge-renderer,
 html.ytx-hideIrrelevant ytd-statement-banner-renderer,
@@ -37,7 +37,7 @@ html.ytx-hideIrrelevant ytd-rich-item-renderer:has(a[href^="/playables"]),
 html.ytx-hideIrrelevant ytd-guide-entry-renderer:has(a[href^="/gaming"]),
 html.ytx-hideIrrelevant ytd-guide-entry-renderer:has(a[href^="/playables"]) { display: none !important; }
 
-/* --- Sayfa düzeni --- */
+/* --- Page layout --- */
 html.ytx-hideComments ytd-comments#comments,
 html.ytx-hideComments ytd-watch-flexy #comments { display: none !important; }
 html.ytx-hideRelated ytd-watch-flexy #related,
@@ -60,9 +60,9 @@ html.ytx-hideNotif ytd-notification-topbar-button-renderer .yt-spec-icon-badge-s
 html.ytx-hideNotif ytd-notification-topbar-button-renderer #notification-count { display: none !important; }
 html.ytx-hideVoice #voice-search-button { display: none !important; }
 
-/* Ana sayfa sütun sayısı */
+/* Home page column count */
 html.ytx-gridOn ytd-rich-grid-renderer { --ytd-rich-grid-items-per-row: var(--ytx-cols) !important; }
 
-/* İlerleme çubuğu rengi */
+/* Progress bar color */
 html.ytx-accentOn .ytp-play-progress, html.ytx-accentOn .ytp-scrubber-button.ytp-swatch-background-color,
 html.ytx-accentOn .ytp-swatch-background-color { background: var(--ytx-accent) !important; }

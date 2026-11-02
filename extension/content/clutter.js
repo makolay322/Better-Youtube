@@ -1,4 +1,4 @@
-/* Gereksiz içerik temizleyici. */
+/* Clutter hider. */
 (function () {
   'use strict';
   const YTX = window.YTX;
@@ -10,7 +10,7 @@
     'ytd-video-renderer', 'ytd-grid-video-renderer', 'ytd-radio-renderer', 'ytd-playlist-renderer',
     'ytm-shorts-lockup-view-model', 'ytd-reel-item-renderer',
   ].join(',');
-  // Şu an dinlenen oynatma listesi paneli asla gizlenmez
+  // The playlist panel currently being played is never hidden
   const NEVER_HIDE = 'ytd-playlist-panel-video-renderer, ytd-playlist-panel-renderer';
 
   const PROGRESS_SELECTOR = [
@@ -68,12 +68,12 @@
   }
   const onSubs = () => location.pathname === '/feed/subscriptions';
   const metaTexts = (tile) => [...tile.querySelectorAll(META_SELECTOR + ',' + BADGE_SELECTOR)].map((el) => el.textContent.replace(/\s+/g, ' ').trim());
-  // Biten canlı yayın: süre rozeti var ama meta satırında "… önce yayınlandı / Streamed … ago" yazar
+  // Ended live stream: has a duration badge but the meta line says "Streamed … ago"
   function isStreamEnded(tile) {
     if (isLive(tile) || isUpcoming(tile)) return false;
     return metaTexts(tile).some((t) => STREAM_ENDED.test(t));
   }
-  // Kurs / podcast playlistleri: playlist bağlantısı olan ve rozet/meta satırında kurs/podcast yazan karolar
+  // Course / podcast playlists: tiles with a playlist link whose badge/meta line says course/podcast
   function isCoursePodcast(tile) {
     if (!tile.querySelector('a[href*="list="], a[href^="/playlist"]')) return false;
     return metaTexts(tile).some((t) => COURSE_PODCAST_BADGE.test(t));
@@ -81,7 +81,7 @@
   function isMembers(tile) {
     return !!tile.querySelector('.badge-style-type-members-only, [class*="members-only"], [class*="membership"]') || badgeMatches(tile, MEMBERS_TEXT);
   }
-  // Mix kimlikleri "RD" ile başlar (RDMM, RDGM, RDEM...); RDCLAK (resmi küratörlü) hariç.
+  // Mix IDs start with "RD" (RDMM, RDGM, RDEM...); RDCLAK (official curated) excluded.
   function isMix(tile) {
     for (const a of tile.querySelectorAll('a[href*="list=RD"]')) if (!/list=RDCLAK/.test(a.getAttribute('href'))) return true;
     const title = titleOf(tile);
@@ -141,7 +141,7 @@
     const S = YTX.s;
     document.querySelectorAll(SHELF_SELECTOR).forEach((shelf) => {
       const outer = shelf.parentElement && shelf.parentElement.closest(SHELF_SELECTOR);
-      if (outer) return; // iç içe raflarda yalnızca en dıştakini işle
+      if (outer) return; // for nested shelves handle only the outermost
       const t = shelf.querySelector('#title, #title-text, h2, yt-formatted-string.ytd-rich-shelf-renderer');
       const title = t ? t.textContent.trim() : '';
       let hide = false;
@@ -152,7 +152,7 @@
       }
       shelf.toggleAttribute(ATTR, hide);
     });
-    // Anketler ("Bu video hoşunuza gitti mi?") — kısa metinli bölümler
+    // Surveys ("Did you like this video?") — short-text sections
     document.querySelectorAll(SURVEY_SELECTOR).forEach((el) => {
       if (el.hasAttribute(ATTR) && !S.c_irrelevant) return;
       if (el.matches('ytd-rich-section-renderer') && el.querySelector(SHELF_SELECTOR.replace('ytd-rich-section-renderer, ', ''))) return;

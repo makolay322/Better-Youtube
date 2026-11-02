@@ -1,5 +1,5 @@
-/* Tüm sitelerde video hızı: G = hazır hız, R = 1x, O = yavaşlat, P = hızlandır.
- * Son hız tarayıcı genelinde (chrome.storage.local) hatırlanır ve açılan her videoya uygulanır. */
+/* Video speed on all sites: G = preset speed, R = 1x, O = slower, P = faster.
+ * The last speed is remembered browser-wide (chrome.storage.local) and applied to every video. */
 (function () {
   'use strict';
   const YTX = window.YTX;
@@ -9,8 +9,8 @@
   const KEY = 'ytxSpeed';
   let s = Object.assign({}, YTX.DEFAULTS);
   let rate = 1;
-  let gen = 0;                 // kullanıcı hızı elle değiştirince artar; bekleyen otomatik uygulamalar iptal olur
-  const seen = new WeakMap();  // video -> son uygulanan kaynak anahtarı
+  let gen = 0;                 // bumped when the user changes speed; cancels pending automatic applies
+  const seen = new WeakMap();  // video -> last applied source key
   let osdEl = null, osdTimer = null;
 
   const active = () => !!(s.enabled && s.sp_on);
@@ -47,7 +47,7 @@
     v.preservesPitch = v.webkitPreservesPitch = !!s.sp_pitch;
   }
 
-  // Kullanıcı eylemi: hızı uygula, kaydet, göster
+  // User action: apply, save and show the speed
   function userSet(r) {
     const v = pickVideo();
     if (!v) return false;
@@ -55,12 +55,12 @@
     gen++;
     rate = r;
     setRate(v, r);
-    try { chrome.storage.local.set({ [KEY]: r }); } catch (e) { /* uzantı yeniden yüklendi */ }
-    osd(v, `Hız: ${r}x`);
+    try { chrome.storage.local.set({ [KEY]: r }); } catch (e) { /* extension was reloaded */ }
+    osd(v, `Speed: ${r}x`);
     return true;
   }
 
-  // Yeni video: hatırlanan hızı uygula (site hızı sıfırlarsa kısa süre sonra yeniden)
+  // New video: apply the remembered speed (again shortly after if the site resets it)
   function autoApply(v) {
     if (!active() || !s.sp_remember || !(v instanceof HTMLVideoElement)) return;
     const key = (v.currentSrc || v.src || '') + '|' + location.href;
@@ -87,7 +87,7 @@
     for (const [key, calc] of acts) {
       if (!s[key] || s[key] !== combo) continue;
       const v = pickVideo();
-      if (!v) return; // sayfada video yoksa tuşa dokunma
+      if (!v) return; // no video on the page: leave the key alone
       e.preventDefault(); e.stopPropagation();
       userSet(calc(v));
       return;
@@ -103,7 +103,7 @@
   chrome.storage.onChanged.addListener((ch, area) => {
     if (area !== 'local') return;
     if (ch[YTX.STORE_KEY]) s = Object.assign({}, YTX.DEFAULTS, ch[YTX.STORE_KEY].newValue || {});
-    if (ch[KEY] && typeof ch[KEY].newValue === 'number') rate = clamp(ch[KEY].newValue); // diğer sekmede değişti: sonraki videolar için
+    if (ch[KEY] && typeof ch[KEY].newValue === 'number') rate = clamp(ch[KEY].newValue); // changed in another tab: for upcoming videos
   });
 
   (async function boot() {

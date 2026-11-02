@@ -1,4 +1,4 @@
-/* Açılır pencere: şemada quick:true işaretli ayarlar + playlist temizleme düğmesi. */
+/* Popup: settings marked quick:true in the schema + the playlist cleaner button. */
 (async function () {
   'use strict';
   const YTX = window.YTX, h = YTX.h;
@@ -22,7 +22,7 @@
 
   function render() {
     list.textContent = '';
-    // Ana anahtar
+    // Master switch
     const master = YTX.ITEMS.enabled;
     list.append(row(master, true));
     for (const sec of YTX.SCHEMA) {
@@ -38,7 +38,7 @@
     return el;
   }
 
-  // --- Playlist temizleme (sayfadaki içerik betiğine mesaj) ---
+  // --- Playlist cleaning (message to the page's content script) ---
   const plBox = document.getElementById('pl');
   let plTimer = null;
   async function send(cmd, extra) {
@@ -52,17 +52,17 @@
     if (!st || !st.onPlaylist) { plBox.hidden = true; clearTimeout(plTimer); return; }
     plBox.hidden = false;
     const info = h('div', { class: 'pl-info' }, st.running
-      ? `Çalışıyor… Kaldırılan: ${st.removed} · Başarısız: ${st.failed}`
-      : st.removed || st.failed ? `Kaldırılan: ${st.removed} · Başarısız: ${st.failed}${st.lastReason ? '\nSon hata: ' + st.lastReason : ''}` : `Hazır · yüklü video: ${st.items}`);
+      ? `Running… Removed: ${st.removed} · Failed: ${st.failed}`
+      : st.removed || st.failed ? `Removed: ${st.removed} · Failed: ${st.failed}${st.lastReason ? '\nLast error: ' + st.lastReason : ''}` : `Ready · loaded videos: ${st.items}`);
     const btn = h('button', { class: st.running ? '' : 'primary', onclick: async () => {
       if (st.running) { await send('stop'); }
       else {
-        if (s.p_confirm && !confirm(`Bu listedeki videolar tek tek kaldırılacak (şu an yüklü: ${st.items}). Devam edilsin mi?`)) return;
+        if (s.p_confirm && !confirm(`Videos in this list will be removed one by one (currently loaded: ${st.items}). Continue?`)) return;
         await send('start');
       }
       renderPlaylist();
-    } }, st.running ? 'Durdur' : 'Listeyi temizle');
-    plBox.append(h('h3', null, 'Bu playlist'), info, btn);
+    } }, st.running ? 'Stop' : 'Clear list');
+    plBox.append(h('h3', null, 'This playlist'), info, btn);
     clearTimeout(plTimer);
     if (st.running) plTimer = setTimeout(renderPlaylist, 1000);
   }

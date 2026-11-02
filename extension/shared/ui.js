@@ -1,4 +1,4 @@
-/* Seçenekler sayfası ve açılır pencere için ortak denetim üreticisi. */
+/* Shared control builder for the options page and popup. */
 (function (g) {
   'use strict';
   const YTX = g.YTX;
@@ -69,7 +69,7 @@
       }
       case 'shortcut': {
         const box = h('div', { class: 'keybox', tabindex: '0', role: 'textbox' });
-        const show = () => { const c = ctx.get(item.key); box.textContent = c || '(kapalı)'; box.classList.toggle('empty', !c); };
+        const show = () => { const c = ctx.get(item.key); box.textContent = c || '(off)'; box.classList.toggle('empty', !c); };
         show();
         box.addEventListener('keydown', (e) => {
           e.preventDefault();
@@ -77,7 +77,7 @@
           const c = YTX.comboFromEvent(e);
           if (c) { ctx.set(item.key, c); show(); }
         });
-        box.addEventListener('focus', () => { box.textContent = 'Tuşa basın…'; });
+        box.addEventListener('focus', () => { box.textContent = 'Press a key…'; });
         box.addEventListener('blur', show);
         return box;
       }
