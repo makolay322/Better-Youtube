@@ -1,0 +1,74 @@
+{
+  "manifest_version": 3,
+  "name": "Better Youtube",
+  "short_name": "Better Youtube",
+  "version": "1.1.1",
+  "description": "Configurable YouTube enhancer: site-wide video speed hotkeys, auto quality with fallback, fine-grained hiding options, repeat hider and playlist cleaner.",
+  "minimum_chrome_version": "105",
+  "permissions": [
+    "storage",
+    "alarms"
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Better Youtube",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "shared/schema.js",
+        "content/speed.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://www.youtube.com/*"
+      ],
+      "js": [
+        "shared/schema.js",
+        "content/core.js",
+        "content/clutter.js",
+        "content/repeat.js",
+        "content/playlist.js",
+        "content/enhancer.js"
+      ],
+      "css": [
+        "content/style.css"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://www.youtube.com/*"
+      ],
+      "js": [
+        "content/main-world.js"
+      ],
+      "world": "MAIN",
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

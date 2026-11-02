@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <title>Better Youtube</title>
+  <link rel="stylesheet" href="../options/options.css">
+  <style>
+    body { width: 340px; max-height: 600px; background: var(--card); }
+    .wrap { padding: 4px 14px 8px; }
+    .top { display: flex; align-items: baseline; justify-content: space-between; padding: 12px 14px 0; }
+    .top h1 { font-size: 15px; margin: 0; }
+    .top small { color: var(--muted); }
+    .row { grid-template-columns: 1fr auto; padding: 6px 0; border-top: 0; }
+    .row .label { font-weight: 500; font-size: 13px; }
+    .row .label.strong { font-weight: 700; }
+    .row input[type=number] { width: 80px; }
+    .row select { width: 150px; }
+    h3 { margin: 12px 0 2px; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+    #pl { margin-top: 4px; } #pl button { width: 100%; margin-top: 6px; }
+    .pl-info { white-space: pre-wrap; font-size: 12.5px; }
+    button.primary { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+    .foot { padding: 4px 14px 12px; }
+    .foot button { width: 100%; }
+  </style>
+</head>
+<body>
+  <div class="top"><h1>Better Youtube</h1><small id="ver"></small></div>
+  <div class="wrap" id="list"></div>
+  <div class="wrap" id="pl" hidden></div>
+  <div class="foot"><button id="opts">Tüm ayarlar…</button></div>
+  <script src="../shared/schema.js"></script>
+  <script src="../shared/ui.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

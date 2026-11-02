@@ -1,0 +1,68 @@
+/* --- Gereksiz içerik / tekrar gizleyici --- */
+html:not(.ytx-dimClutter) [data-ytx-clutter] { display: none !important; }
+html.ytx-dimClutter [data-ytx-clutter] { opacity: .15; transition: opacity .15s; }
+html.ytx-dimClutter [data-ytx-clutter]:hover { opacity: 1; }
+html:not(.ytx-dimRepeat) [data-ytx-repeat] { display: none !important; }
+html.ytx-dimRepeat [data-ytx-repeat] { opacity: .15; transition: opacity .15s; }
+html.ytx-dimRepeat [data-ytx-repeat]:hover { opacity: 1; }
+
+/* Shorts */
+html.ytx-hideShorts ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),
+html.ytx-hideShorts ytd-reel-shelf-renderer,
+html.ytx-hideShorts grid-shelf-view-model:has(a[href^="/shorts/"]),
+html.ytx-hideShorts ytd-rich-item-renderer:has(a[href^="/shorts/"]),
+html.ytx-hideShorts ytd-video-renderer:has(a[href^="/shorts/"]),
+html.ytx-hideShorts ytd-grid-video-renderer:has(a[href^="/shorts/"]),
+html.ytx-hideShorts yt-lockup-view-model:has(a[href^="/shorts/"]),
+html.ytx-hideShorts ytd-guide-entry-renderer:has(a[title="Shorts"]),
+html.ytx-hideShorts ytd-mini-guide-entry-renderer[aria-label="Shorts"],
+html.ytx-hideShorts ytm-shorts-lockup-view-model-v2,
+html.ytx-hideShorts ytd-rich-item-renderer:has(ytm-shorts-lockup-view-model),
+html.ytx-hideShorts ytd-rich-item-renderer:has(ytm-shorts-lockup-view-model-v2),
+html.ytx-hideShorts ytd-compact-video-renderer:has(a[href^="/shorts/"]),
+html.ytx-hideShorts ytd-guide-entry-renderer:has(a[href^="/shorts"]),
+html.ytx-hideShorts ytd-mini-guide-entry-renderer:has(a[href^="/shorts"]),
+html.ytx-hideShorts ytd-reel-item-renderer,
+html.ytx-hideShorts yt-tab-shape[tab-title="Shorts"] { display: none !important; }
+
+/* Anketler, oyunlar (Playables) ve diğer alakasız öğeler (metin tabanlı olanlar clutter.js ile işaretlenir) */
+html.ytx-hideIrrelevant ytd-inline-survey-renderer,
+html.ytx-hideIrrelevant ytd-feed-nudge-renderer,
+html.ytx-hideIrrelevant ytd-statement-banner-renderer,
+html.ytx-hideIrrelevant ytd-mealbar-promo-renderer,
+html.ytx-hideIrrelevant ytd-rich-section-renderer:has(ytd-inline-survey-renderer),
+html.ytx-hideIrrelevant ytd-rich-section-renderer:has(ytd-feed-nudge-renderer),
+html.ytx-hideIrrelevant ytd-rich-section-renderer:has(a[href^="/playables"]),
+html.ytx-hideIrrelevant ytd-rich-item-renderer:has(a[href^="/playables"]),
+html.ytx-hideIrrelevant ytd-guide-entry-renderer:has(a[href^="/gaming"]),
+html.ytx-hideIrrelevant ytd-guide-entry-renderer:has(a[href^="/playables"]) { display: none !important; }
+
+/* --- Sayfa düzeni --- */
+html.ytx-hideComments ytd-comments#comments,
+html.ytx-hideComments ytd-watch-flexy #comments { display: none !important; }
+html.ytx-hideRelated ytd-watch-flexy #related,
+html.ytx-hideRelated ytd-watch-flexy #secondary-inner > #related { display: none !important; }
+html.ytx-hideChat ytd-live-chat-frame, html.ytx-hideChat #chat-container, html.ytx-hideChat #chat { display: none !important; }
+html.ytx-hideEndCards .ytp-ce-element, html.ytx-hideEndCards .ytp-endscreen-content,
+html.ytx-hideEndCards .ytp-ce-covering-overlay, html.ytx-hideEndCards .videowall-endscreen { display: none !important; }
+html.ytx-hideCards .ytp-cards-teaser, html.ytx-hideCards .ytp-cards-button, html.ytx-hideCards .iv-branding,
+html.ytx-hideCards .ytp-iv-video-content, html.ytx-hideCards .annotation, html.ytx-hideCards .ytp-paid-content-overlay { display: none !important; }
+html.ytx-hideWatermark .ytp-watermark, html.ytx-hideWatermark .annotation-type-custom { display: none !important; }
+html.ytx-hideMerch ytd-merch-shelf-renderer, html.ytx-hideMerch ytd-product-list-renderer,
+html.ytx-hideMerch ytd-donation-shelf-renderer, html.ytx-hideMerch ytd-ticket-shelf-renderer,
+html.ytx-hideMerch #merch-shelf { display: none !important; }
+html.ytx-hideInfoPanel ytd-info-panel-container-renderer, html.ytx-hideInfoPanel ytd-clarification-renderer { display: none !important; }
+html.ytx-hidePromos ytd-mealbar-promo-renderer, html.ytx-hidePromos ytd-statement-banner-renderer,
+html.ytx-hidePromos ytd-banner-promo-renderer, html.ytx-hidePromos ytd-primetime-promo-renderer { display: none !important; }
+html.ytx-hideAmbient #cinematics, html.ytx-hideAmbient #cinematics-container { display: none !important; }
+html.ytx-hideAutoplayBtn .ytp-autonav-toggle-button-container { display: none !important; }
+html.ytx-hideNotif ytd-notification-topbar-button-renderer .yt-spec-icon-badge-shape__badge,
+html.ytx-hideNotif ytd-notification-topbar-button-renderer #notification-count { display: none !important; }
+html.ytx-hideVoice #voice-search-button { display: none !important; }
+
+/* Ana sayfa sütun sayısı */
+html.ytx-gridOn ytd-rich-grid-renderer { --ytd-rich-grid-items-per-row: var(--ytx-cols) !important; }
+
+/* İlerleme çubuğu rengi */
+html.ytx-accentOn .ytp-play-progress, html.ytx-accentOn .ytp-scrubber-button.ytp-swatch-background-color,
+html.ytx-accentOn .ytp-swatch-background-color { background: var(--ytx-accent) !important; }
