@@ -6,7 +6,7 @@ A Chrome / Chromium / Edge / Brave extension (Manifest V3) that improves YouTube
 
 Chrome rejects `.crx` files that don't come from the Web Store (`CRX_REQUIRED_PROOF_MISSING`), so the extension is installed unpacked. It takes about a minute and is permanent.
 
-1. Download [`dist/better-youtube-1.2.0.zip`](dist/better-youtube-1.2.0.zip) (open the file on GitHub and click **Download raw file**) and extract it into a **permanent folder** (e.g. `Documents/better-youtube`). Don't delete the folder afterwards.
+1. Download [`dist/better-youtube-1.2.1.zip`](dist/better-youtube-1.2.1.zip) (open the file on GitHub and click **Download raw file**) and extract it into a **permanent folder** (e.g. `Documents/better-youtube`). Don't delete the folder afterwards.
 2. Open `chrome://extensions` and enable **Developer mode** (top right).
 3. Click **Load unpacked** and select the extracted folder.
 4. Click the toolbar icon, then **All settings…** to open the settings page.

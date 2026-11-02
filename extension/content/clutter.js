@@ -22,13 +22,15 @@
     'ytd-thumbnail-overlay-time-status-renderer', 'yt-thumbnail-badge-view-model', '.badge-shape-wiz__text',
     '.yt-badge-shape__text', 'ytd-badge-supported-renderer',
   ].join(',');
-  const LIVE_TEXT = /^\s*(live|canl[ıiI])\s*$/i;
+  const LIVE_TEXT = /^\s*(live|canl[ıiI]|live now|şimdi canlı|jetzt live|en direct)\s*$/i;
+  // "1.2K watching" in the meta line is shown only for live streams
+  const WATCHING_TEXT = /\b(watching|izliyor|zuschauer|spectateurs|espectadores|osservatori|oglądających)\b|izleyen/i;
   const UPCOMING_TEXT = /^\s*(upcoming|premieres?|yaklaşan|prömiyer|planlandı)/i;
   const MEMBERS_TEXT = /members only|üyelere özel|nur für mitglieder/i;
   const TIME_TEXT = /^\s*(\d+:)?\d{1,2}:\d{2}\s*$/;
   const MIX_TITLE = /^\s*(your mix|mix\b|karışım)/i;
   const SHELF_SELECTOR = 'ytd-rich-section-renderer, ytd-shelf-renderer, ytd-horizontal-card-list-renderer, ytd-rich-shelf-renderer';
-  const SHELF_TITLE = /yeni konular|konuları keşfedin|explore (new )?topics|discover new topics/i;
+  const SHELF_TITLE = /yeni konular|konuları keşfedin|konu keşfet|explore (new )?topics|discover (new )?topics|neue themen|nouveaux sujets|nuevos temas/i;
   const COURSE_PODCAST_SHELF = /podcast|kurs|course/i;
   const COURSE_PODCAST_BADGE = /(^|[\s·•|])(course|courses|kurs|kurslar|podcast|podcasts|podcastler)(?=$|[\s·•|])/i;
   const SURVEY_TEXT = /bu video hoşunuza gitti mi|videoyu beğendiniz mi|did you like this video|are you enjoying this video|how do you like this video/i;
@@ -49,15 +51,17 @@
   function progressOf(tile) {
     let max = 0;
     for (const el of tile.querySelectorAll(PROGRESS_SELECTOR)) {
-      const w = parseFloat(el.style.width);
+      let w = parseFloat(el.style.width);
+      if (!(w >= 0)) { const m = /width:\s*([\d.]+)%/.exec(el.getAttribute('style') || ''); w = m ? parseFloat(m[1]) : 0; }
       if (w > max) max = w;
     }
     return max;
   }
   function isLive(tile) {
-    if (tile.querySelector('ytd-thumbnail-overlay-time-status-renderer[overlay-style="LIVE"], .badge-style-type-live-now, [class*="badge-shape-wiz--thumbnail-live"], [class*="thumbnail-live"]')) return true;
+    if (tile.querySelector('ytd-thumbnail[is-live-video], ytd-thumbnail-overlay-time-status-renderer[overlay-style="LIVE"], .badge-style-type-live-now, [class*="badge-shape-wiz--thumbnail-live"], [class*="thumbnail-live"], [class*="ThumbnailLive"], [class*="live-badge"]')) return true;
     for (const el of tile.querySelectorAll(BADGE_SELECTOR)) if (LIVE_TEXT.test(el.textContent)) return true;
-    return false;
+    // Modern tiles: no badge, only "N watching" in the meta line
+    return metaTexts(tile).some((t) => WATCHING_TEXT.test(t));
   }
   function badgeMatches(tile, re) {
     for (const el of tile.querySelectorAll(BADGE_SELECTOR)) if (re.test(el.textContent)) return true;
