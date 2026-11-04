@@ -1,4 +1,4 @@
-# Yayınlama rehberi — Kolay Youtube
+# Yayınlama rehberi — Kolay for YouTube
 
 Chrome Web Store, Firefox Add-ons (AMO) ve landing page için adım adım yapılacaklar.
 Kopyala-yapıştır metinler `store/LISTING.md` içinde; görseller `store/` klasöründe.
@@ -76,7 +76,16 @@ const STORES = {
 
 Bunlar boşken butonlar sayfadaki kurulum bölümüne kayar; dolunca mağazaya gider. Firefox ile gelen ziyaretçide Firefox butonu otomatik öne alınır. README'deki "Install" bölümüne de linkleri ekle.
 
-## 5. Yeni sürüm yayınlama
+## 5. Diller
+
+Arayüz 8 dilde: English, Türkçe, Español, Português (BR), Deutsch, Français, Русский, 日本語.
+
+- Ayarlar sayfası / popup metinleri: `extension/shared/locales/<kod>.js`. İngilizce metinler kaynakta (`shared/schema.js` ve `t('ui.x', 'English')` çağrıları).
+- Mağazada görünen kısa açıklama: `extension/_locales/<kod>/messages.json` (`extDescription`, en fazla 132 karakter). Chrome Web Store her dilde bunu otomatik gösterir.
+- Yeni bir ayar ya da metin eklediysen `node tools/check-i18n.js` çalıştır: eksik / fazla / yer tutucusu bozuk çevirileri listeler (CI de çalıştırır).
+- Chrome Web Store'da diğer diller için ayrıntılı açıklama girmek isteğe bağlıdır; girilmezse İngilizce gösterilir.
+
+## 6. Yeni sürüm yayınlama
 
 1. `extension/manifest.json` → `version`'ı artır (ör. `1.3.1`).
 2. `./tools/build.sh`
@@ -85,6 +94,6 @@ Bunlar boşken butonlar sayfadaki kurulum bölümüne kayar; dolunca mağazaya g
 
 ## Dikkat edilecekler
 
-- **İsimde "YouTube" geçmesi:** Mağazalar "X for YouTube" kalıbını marka açısından daha güvenli görüyor. "Kolay Youtube" çoğu durumda kabul edilir (benzer adlı pek çok eklenti var), ama inceleme marka gerekçesiyle reddederse yedek isim önerisi: **"Kolay — Toolkit for YouTube"**. Sadece `manifest.json`'daki `name`/`short_name`/`default_title` ve listeleme metnini değiştirmek yeterli. Eski ikon YouTube logosunun neredeyse aynısıydı; bu yüzden özgün "K" ikonuyla değiştirildi.
+- **İsim:** "Kolay for YouTube", mağazaların marka açısından önerdiği "X for YouTube" kalıbına uyar. Ad, `extension/_locales/*/messages.json` içindeki `extName` alanından gelir (tüm dillerde aynı). Eski ikon YouTube logosunun neredeyse aynısıydı; bu yüzden özgün "K" ikonuyla değiştirildi.
 - Landing page ve açıklamalarda "YouTube veya Google ile bağlantılı değildir" ibaresi zaten var — kaldırma.
 - Lisans olarak MIT eklendi; farklı bir lisans istersen `LICENSE` dosyasını değiştir.

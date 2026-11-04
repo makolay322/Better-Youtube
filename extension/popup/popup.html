@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Kolay Youtube</title>
+  <title>Kolay for YouTube</title>
   <link rel="stylesheet" href="../options/options.css">
   <style>
     body { width: 340px; max-height: 600px; background: var(--card); }
     .wrap { padding: 4px 14px 8px; }
-    .top { display: flex; align-items: baseline; justify-content: space-between; padding: 12px 14px 0; }
+    .top { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px 0; }
     .top h1 { font-size: 15px; margin: 0; }
     .top small { color: var(--muted); }
     .row { grid-template-columns: 1fr auto; padding: 6px 0; border-top: 0; }
@@ -15,20 +15,33 @@
     .row .label.strong { font-weight: 700; }
     .row input[type=number] { width: 80px; }
     .row select { width: 150px; }
+    .row.sel { grid-template-columns: 1fr; gap: 4px; }
+    .row.sel .ctl { justify-content: stretch; }
+    .row.sel select { width: 100%; }
     h3 { margin: 12px 0 2px; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
     #pl { margin-top: 4px; } #pl button { width: 100%; margin-top: 6px; }
     .pl-info { white-space: pre-wrap; font-size: 12.5px; }
     button.primary { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
     .foot { padding: 4px 14px 12px; }
     .foot button { width: 100%; }
+    body.off .wrap .row:not(.master), body.off .wrap h3 { opacity: .45; }
+    .off-note { color: var(--muted); font-size: 12px; margin: 0 0 6px; }
   </style>
 </head>
 <body>
-  <div class="top"><h1 class="brand"><img src="../icons/icon32.png" alt="" width="22" height="22">Kolay Youtube</h1><small id="ver"></small></div>
+  <div class="top"><h1 class="brand"><img src="../icons/icon32.png" alt="" width="22" height="22">Kolay for YouTube</h1><small id="ver"></small></div>
   <div class="wrap" id="list"></div>
   <div class="wrap" id="pl" hidden></div>
-  <div class="foot"><button id="opts">All settings…</button></div>
+  <div class="foot"><button id="opts" data-i18n="ui.allSettings">All settings…</button></div>
   <script src="../shared/schema.js"></script>
+  <script src="../shared/i18n.js"></script>
+  <script src="../shared/locales/tr.js"></script>
+  <script src="../shared/locales/es.js"></script>
+  <script src="../shared/locales/pt.js"></script>
+  <script src="../shared/locales/de.js"></script>
+  <script src="../shared/locales/fr.js"></script>
+  <script src="../shared/locales/ru.js"></script>
+  <script src="../shared/locales/ja.js"></script>
   <script src="../shared/ui.js"></script>
   <script src="popup.js"></script>
 </body>

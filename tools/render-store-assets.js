@@ -23,7 +23,7 @@ const SHOTS = [
   ['01-hiding', 'Hide Shorts, Mixes and clutter', 'Every rule has its own switch.', 'img/options-hide-light.webp'],
   ['02-speed', 'Speed hotkeys on every site', 'G · R · O · P — remembered browser-wide.', 'img/options-light.webp'],
   ['03-popup', 'Most used switches, one click away', 'Quality, speed and hiding right from the toolbar.', 'img/popup-light.webp', true],
-  ['04-dark', 'Light and dark, searchable settings', 'Export and import everything as JSON.', 'img/options-dark.webp'],
+  ['04-dark', 'Light and dark, searchable settings', 'JSON export / import · 8 languages.', 'img/options-dark.webp'],
 ];
 
 (async () => {
@@ -50,7 +50,7 @@ const SHOTS = [
   const tile = (w, h, iconS, titleS, subS) => `
     <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:${iconS * .3}px">
       <img src="${img('icon.svg')}" width="${iconS}" height="${iconS}" style="filter:drop-shadow(0 10px 20px rgba(60,0,30,.35))">
-      <div><h1 style="font-size:${titleS}px;line-height:1">Kolay Youtube</h1><p style="font-size:${subS}px;margin-top:${subS * .5}px;font-weight:500">A calmer, faster YouTube.</p></div>
+      <div style="max-width:${w * .6}px"><h1 style="font-size:${titleS}px;line-height:1.02">Kolay for YouTube</h1><p style="font-size:${subS}px;margin-top:${subS * .5}px;font-weight:500">A calmer, faster YouTube.</p></div>
     </div>`;
   await render(440, 280, tile(440, 280, 96, 38, 17), 'store/promo-small-440x280.png');
   await render(1400, 560, tile(1400, 560, 200, 92, 36), 'store/promo-marquee-1400x560.png');

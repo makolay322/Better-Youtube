@@ -9,7 +9,7 @@ Images: `store/screenshots/*.png` (1280×800), `store/promo-small-440x280.png`,
 ## Name
 
 ```
-Kolay Youtube
+Kolay for YouTube
 ```
 
 ## Summary (Chrome "short description" = manifest description, max 132 chars; AMO summary max 250)
@@ -17,6 +17,10 @@ Kolay Youtube
 ```
 Speed hotkeys for every video, auto quality, Shorts & clutter hiding, a repeat hider and a playlist cleaner for YouTube.
 ```
+
+## Localized short descriptions
+
+The manifest is localized (`extension/_locales/*/messages.json`), so the Chrome Web Store shows the short description in en, tr, es, pt_BR, de, fr, ru and ja automatically.
 
 ## Category
 
@@ -34,7 +38,7 @@ Speed hotkeys for every video, auto quality, Shorts & clutter hiding, a repeat h
 ## Detailed description — English
 
 ```
-Kolay Youtube makes YouTube calmer and faster — and gives every video on the web keyboard speed controls. Every feature has its own switch, so you only turn on what you need.
+Kolay for YouTube makes YouTube calmer and faster — and gives every video on the web keyboard speed controls. Every feature has its own switch, so you only turn on what you need.
 
 ⚡ SPEED HOTKEYS ON EVERY SITE
 • G – jump to your preset speed, R – back to 1×, O / P – slower / faster
@@ -69,20 +73,20 @@ Empty Watch Later or any of your playlists with one click.
 • Videos per row on the home page, custom progress bar color
 
 ⚙ SETTINGS
-Searchable settings page, light & dark theme, export / import as JSON.
+Searchable settings page, light & dark theme, export / import as JSON. Available in English, Turkish, Spanish, Portuguese, German, French, Russian and Japanese.
 
 🔒 PRIVACY
 No data collection, no analytics, no network requests, no ads. Settings are stored only in your browser. Open source: https://github.com/makolay322/Better-Youtube
 
 Why "access to all websites"? Only for the speed hotkeys, which work on videos on any site. That script just listens for your shortcut keys and changes the playback speed of <video> elements.
 
-Kolay Youtube is an independent project and is not affiliated with YouTube or Google LLC.
+Kolay for YouTube is an independent project and is not affiliated with YouTube or Google LLC.
 ```
 
 ## Detailed description — Türkçe
 
 ```
-Kolay Youtube, YouTube'u daha sade ve hızlı hale getirir — webdeki her videoya da klavyeden hız kontrolü kazandırır. Her özelliğin kendi anahtarı var; sadece ihtiyacın olanı açarsın.
+Kolay for YouTube, YouTube'u daha sade ve hızlı hale getirir — webdeki her videoya da klavyeden hız kontrolü kazandırır. Her özelliğin kendi anahtarı var; sadece ihtiyacın olanı açarsın.
 
 ⚡ HER SİTEDE HIZ KISAYOLLARI
 • G – hazır hıza geç, R – 1×'e dön, O / P – yavaşlat / hızlandır
@@ -117,14 +121,14 @@ Daha Sonra İzle'yi ya da kendi listelerini tek tıkla boşalt.
 • Ana sayfada satır başına video sayısı, özel ilerleme çubuğu rengi
 
 ⚙ AYARLAR
-Aranabilir ayarlar sayfası, açık ve koyu tema, JSON olarak dışa / içe aktarma.
+Aranabilir ayarlar sayfası, açık ve koyu tema, JSON olarak dışa / içe aktarma. Türkçe, İngilizce, İspanyolca, Portekizce, Almanca, Fransızca, Rusça ve Japonca.
 
 🔒 GİZLİLİK
 Veri toplama yok, analitik yok, ağ isteği yok, reklam yok. Ayarlar sadece tarayıcında saklanır. Açık kaynak: https://github.com/makolay322/Better-Youtube
 
 Neden "tüm sitelere erişim"? Sadece her sitedeki videolarda çalışan hız kısayolları için. O betik yalnızca kısayol tuşlarını dinler ve <video> öğelerinin hızını değiştirir.
 
-Kolay Youtube bağımsız bir projedir; YouTube veya Google LLC ile bağlantılı değildir.
+Kolay for YouTube bağımsız bir projedir; YouTube veya Google LLC ile bağlantılı değildir.
 ```
 
 ---
@@ -134,7 +138,7 @@ Kolay Youtube bağımsız bir projedir; YouTube veya Google LLC ile bağlantıl�
 **Single purpose description**
 
 ```
-Kolay Youtube improves the YouTube viewing experience (hiding unwanted content, automatic quality, player and layout tweaks) and adds keyboard shortcuts to control the playback speed of videos.
+Kolay for YouTube improves the YouTube viewing experience (hiding unwanted content, automatic quality, player and layout tweaks) and adds keyboard shortcuts to control the playback speed of videos.
 ```
 
 **Permission justifications**

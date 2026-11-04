@@ -2,17 +2,25 @@
 (function () {
   'use strict';
   const YTX = window.YTX;
+  const { t, tr } = YTX;
   const REPEAT_KEY = 'repeatCounts';
   let settings = Object.assign({}, YTX.DEFAULTS);
-  const rows = {}; // key -> { item, el }
+  let rows = {}; // key -> { item, el }
 
   const $ = (sel, root) => (root || document).querySelector(sel);
   const h = YTX.h;
   let toastTimer;
   function toast(msg) {
-    const t = $('#toast');
-    t.textContent = msg; t.classList.add('on');
-    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('on'), 2200);
+    const el = $('#toast');
+    el.textContent = msg; el.classList.add('on');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('on'), 2400);
+  }
+
+  let savedTimer;
+  function flashSaved() {
+    const el = $('#saved');
+    el.classList.add('on');
+    clearTimeout(savedTimer); savedTimer = setTimeout(() => el.classList.remove('on'), 1400);
   }
 
   // Batch changes and write once (sliders fire many events)
@@ -21,8 +29,10 @@
     settings[key] = value;
     patch[key] = value;
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(async () => { const p = patch; patch = {}; await YTX.saveSettings(p); }, 150);
+    saveTimer = setTimeout(async () => { const p = patch; patch = {}; await YTX.saveSettings(p); flashSaved(); }, 150);
     updateDeps();
+    if (YTX.ITEMS[key].type === 'shortcut') updateConflicts();
+    if (key === 'ui_lang') applyLang();
   }
 
   const ctx = { get: (k) => settings[k], set, run: (id) => runAction(id) };
@@ -32,60 +42,110 @@
       const r = (await chrome.storage.local.get(REPEAT_KEY))[REPEAT_KEY] || {};
       const ids = Object.keys(r);
       const hidden = ids.filter((k) => r[k].c >= settings.r_max).length;
-      toast(`Tracked videos: ${ids.length}\nHidden (≥${settings.r_max} impressions): ${hidden}`);
+      toast(t('ui.statsMsg', 'Tracked videos: {n}\nHidden (≥{max} impressions): {hidden}', { n: ids.length, max: settings.r_max, hidden }));
     } else if (id === 'repeatReset') {
-      if (!confirm('Delete all impression counters?')) return;
+      if (!confirm(t('ui.confirmCounters', 'Delete all impression counters?'))) return;
       await chrome.storage.local.remove(REPEAT_KEY);
-      toast('Counters reset.');
+      toast(t('ui.countersReset', 'Counters reset.'));
     }
   }
 
   function build() {
     const nav = $('#nav'), main = $('#main');
-    nav.textContent = ''; main.textContent = '';
+    nav.textContent = ''; main.textContent = ''; rows = {};
     let lastGroup = null;
     YTX.SCHEMA.forEach((sec) => {
-      if (sec.group !== lastGroup) { lastGroup = sec.group; nav.append(h('div', { class: 'nav-group' }, sec.group)); }
-      const a = h('a', { href: '#sec_' + sec.id, onclick: (e) => { e.preventDefault(); $('#sec_' + sec.id).scrollIntoView({ behavior: 'smooth' }); } }, sec.title);
+      const title = tr.secTitle(sec);
+      if (sec.group !== lastGroup) { lastGroup = sec.group; nav.append(h('div', { class: 'nav-group' }, tr.group(sec.group))); }
+      const a = h('a', { href: '#sec_' + sec.id, onclick: (e) => { e.preventDefault(); $('#sec_' + sec.id).scrollIntoView({ behavior: 'smooth' }); } }, title);
       a.dataset.sec = sec.id;
       nav.append(a);
-      const card = h('section', { id: 'sec_' + sec.id, class: sec.group === 'Other' ? 'minor' : '' },
-        h('div', { class: 'sec-head' }, h('h2', null, sec.title),
-          h('button', { class: 'sec-reset', onclick: () => resetSection(sec) }, 'Reset section')),
-        h('p', { class: 'sec-desc' }, sec.desc));
+      const card = h('section', { id: 'sec_' + sec.id, class: sec.group === 'other' ? 'minor' : '' },
+        h('div', { class: 'sec-head' }, h('h2', null, title),
+          h('button', { class: 'sec-reset', onclick: () => resetSection(sec) }, t('ui.resetSection', 'Reset section'))),
+        h('p', { class: 'sec-desc' }, tr.secDesc(sec)));
       for (const item of sec.items) {
         const wide = item.type === 'textarea';
-        const label = h('div', null, h('div', { class: 'label' }, item.label), item.desc ? h('div', { class: 'desc' }, item.desc) : null);
+        const lab = tr.label(item), dsc = tr.desc(item);
+        const label = h('div', null,
+          h(item.key ? 'label' : 'div', { class: 'label', for: item.key && item.type !== 'shortcut' ? 'f_' + item.key : null }, lab),
+          dsc ? h('div', { class: 'desc' }, dsc) : null,
+          item.type === 'shortcut' ? h('div', { class: 'conflict-msg' }) : null);
         const ctl = h('div', { class: 'ctl' }, YTX.control(item, ctx));
         const row = h('div', { class: 'row' + (wide ? ' wide' : '') }, label, ctl);
-        row.dataset.text = (item.label + ' ' + (item.desc || '') + ' ' + sec.title).toLowerCase();
+        // Search matches the current language and English
+        row.dataset.text = [lab, dsc, title, item.label, item.desc, sec.title].join(' ').toLowerCase();
         if (item.key) rows[item.key] = { item, el: row };
         card.append(row);
       }
       main.append(card);
     });
     updateDeps();
+    updateConflicts();
+    observeSections();
+    filter();
   }
 
   function updateDeps() {
     for (const { item, el } of Object.values(rows)) el.classList.toggle('disabled', !YTX.depOk(item, settings));
   }
 
+  // Two shortcuts on the same key: mark both
+  function updateConflicts() {
+    const sc = Object.values(rows).filter(({ item }) => item.type === 'shortcut');
+    for (const { item, el } of sc) {
+      const v = settings[item.key];
+      const other = v && sc.find((o) => o.item.key !== item.key && settings[o.item.key] === v);
+      el.classList.toggle('conflict', !!other);
+      el.querySelector('.conflict-msg').textContent = other ? t('ui.conflict', 'Also used by “{name}”.', { name: tr.label(other.item) }) : '';
+    }
+  }
+
   async function resetSection(sec) {
-    if (!confirm(`Reset the settings in “${sec.title}” to defaults?`)) return;
+    if (!confirm(t('ui.confirmSection', 'Reset the settings in “{title}” to defaults?', { title: tr.secTitle(sec) }))) return;
     const p = {};
     sec.items.forEach((it) => { if (it.key) p[it.key] = it.def; });
     await YTX.saveSettings(p);
     settings = await YTX.loadSettings();
-    build(); toast('Section reset.');
+    applyLang(); toast(t('ui.sectionReset', 'Section reset.'));
   }
 
-  // Arama
-  $('#search').addEventListener('input', (e) => {
-    const q = e.target.value.trim().toLowerCase();
+  // Search
+  const search = $('#search');
+  function filter() {
+    const q = search.value.trim().toLowerCase();
     document.querySelectorAll('.row').forEach((r) => r.classList.toggle('hidden', !!q && !r.dataset.text.includes(q)));
-    document.querySelectorAll('section').forEach((s) => { s.style.display = q && !s.querySelector('.row:not(.hidden)') ? 'none' : ''; });
+    let any = false;
+    document.querySelectorAll('#main section').forEach((s) => {
+      const vis = !q || !!s.querySelector('.row:not(.hidden)');
+      s.style.display = vis ? '' : 'none';
+      any = any || vis;
+    });
+    const nr = $('#noresults');
+    nr.hidden = any;
+    if (!any) nr.textContent = t('ui.noResults', 'No settings match “{q}”.', { q: search.value.trim() });
+  }
+  search.addEventListener('input', filter);
+  search.addEventListener('keydown', (e) => { if (e.key === 'Escape') { search.value = ''; filter(); search.blur(); } });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && !document.activeElement.classList.contains('keybox')) {
+      e.preventDefault(); search.focus();
+    }
   });
+
+  // Language picker in the header (same setting as General › Language)
+  const langSel = $('#lang');
+  langSel.append(...YTX.ITEMS.ui_lang.options.map((o) => h('option', { value: o[0] }, tr.option(YTX.ITEMS.ui_lang, o))));
+  langSel.addEventListener('change', () => set('ui_lang', langSel.value));
+
+  function applyLang() {
+    YTX.setLang(settings.ui_lang);
+    document.title = 'Kolay for YouTube – ' + t('ui.settings', 'Settings');
+    YTX.applyStatic();
+    langSel.value = settings.ui_lang;
+    langSel.options[0].textContent = tr.option(YTX.ITEMS.ui_lang, YTX.ITEMS.ui_lang.options[0]);
+    build();
+  }
 
   // Export / import / reset
   $('#export').addEventListener('click', () => {
@@ -102,14 +162,14 @@
       const clean = {};
       for (const k of Object.keys(YTX.DEFAULTS)) if (k in obj && typeof obj[k] === typeof YTX.DEFAULTS[k]) clean[k] = obj[k];
       await YTX.replaceSettings(clean);
-      settings = await YTX.loadSettings(); build();
-      toast(`${Object.keys(clean).length} settings imported.`);
-    } catch (err) { toast('Invalid settings file.'); }
+      settings = await YTX.loadSettings(); applyLang();
+      toast(t('ui.imported', '{n} settings imported.', { n: Object.keys(clean).length }));
+    } catch (err) { toast(t('ui.badFile', 'Invalid settings file.')); }
   });
   $('#reset').addEventListener('click', async () => {
-    if (!confirm('Reset all settings to defaults?')) return;
+    if (!confirm(t('ui.confirmAll', 'Reset all settings to defaults?'))) return;
     await YTX.replaceSettings({});
-    settings = await YTX.loadSettings(); build(); toast('Settings reset.');
+    settings = await YTX.loadSettings(); applyLang(); toast(t('ui.allReset', 'Settings reset.'));
   });
 
   // Highlight the active section in the side menu while scrolling
@@ -118,6 +178,7 @@
       document.querySelectorAll('nav a').forEach((a) => a.classList.toggle('active', a.dataset.sec === e.target.id.slice(4)));
     } });
   }, { rootMargin: '-20% 0px -70% 0px' });
+  function observeSections() { obs.disconnect(); document.querySelectorAll('#main section').forEach((s) => obs.observe(s)); }
 
   // Refresh the page if settings change elsewhere (popup, shortcut)
   chrome.storage.onChanged.addListener((ch, area) => {
@@ -125,12 +186,13 @@
     const next = Object.assign({}, YTX.DEFAULTS, ch[YTX.STORE_KEY].newValue || {});
     const changed = Object.keys(next).filter((k) => next[k] !== settings[k]);
     if (!changed.length || document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) return;
-    settings = next; build(); document.querySelectorAll('section').forEach((s) => obs.observe(s));
+    settings = next; applyLang();
   });
 
   (async function init() {
     settings = await YTX.loadSettings();
-    build();
-    document.querySelectorAll('section').forEach((s) => obs.observe(s));
+    $('#ver').textContent = 'v' + chrome.runtime.getManifest().version;
+    applyLang();
+    if (location.hash.startsWith('#sec_')) { const el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView(); }
   })();
 })();

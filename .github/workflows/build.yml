@@ -18,6 +18,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Check translations
+        run: node tools/check-i18n.js
       - name: Build store packages
         run: python3 tools/build.py --unpacked
       - name: Lint Firefox package (web-ext)

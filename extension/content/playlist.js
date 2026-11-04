@@ -6,12 +6,12 @@
 
   const LINK_SELECTOR = 'a[href*="/watch?v="]';
   const SKIP_AREA = 'ytd-playlist-header-renderer, ytd-playlist-sidebar-renderer, yt-page-header-renderer, ytd-masthead, ytd-miniplayer';
-  const MENU_BTN_SELECTOR = '[class*="MenuButton"] button, #menu button, ytd-menu-renderer button, button[aria-label*="menu" i], button[aria-label*="menü" i], button[aria-label*="eylem" i], button[aria-label*="action" i], button[aria-label*="aktion" i]';
+  const MENU_BTN_SELECTOR = '[class*="MenuButton"] button, #menu button, ytd-menu-renderer button, button[aria-label*="menu" i], button[aria-label*="menü" i], button[aria-label*="eylem" i], button[aria-label*="action" i], button[aria-label*="aktion" i], button[aria-label*="menú" i], button[aria-label*="меню" i], button[aria-label*="メニュー"]';
   const MENU_ITEM_SELECTOR = 'ytd-menu-service-item-renderer, yt-list-item-view-model, tp-yt-paper-item, ytd-menu-navigation-item-renderer, [role="menuitem"]';
   const POPUP_AREA = 'ytd-popup-container, tp-yt-iron-dropdown, ytd-menu-popup-renderer, yt-contextual-sheet-layout, yt-sheet-view-model, [role="menu"], [role="dialog"]';
   const CLICKABLE = 'yt-list-item-view-model, ytd-menu-service-item-renderer, tp-yt-paper-item, [role="menuitem"], button, a';
   const KNOWN_TILES = 'ytd-playlist-video-renderer, yt-lockup-view-model, ytd-playlist-panel-video-renderer';
-  const BASE_REMOVE = 'remove from|kaldır|entfernen|supprimer|eliminar|quitar|rimuovi';
+  const BASE_REMOVE = 'remove from|kaldır|entfernen|supprimer|eliminar|quitar|rimuovi|remover|retirer|удалить|削除';
 
   let removeText = new RegExp(BASE_REMOVE, 'i');
   let running = false, removed = 0, failed = 0, lastReason = '';

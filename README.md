@@ -1,12 +1,12 @@
 <p align="center"><img src="assets/icon256.png" width="96" height="96" alt=""></p>
-<h1 align="center">Kolay Youtube</h1>
+<h1 align="center">Kolay for YouTube</h1>
 <p align="center">A calmer, faster YouTube — plus speed hotkeys for every video on the web.<br>
 <a href="https://makolay322.github.io/Better-Youtube/">Website</a> ·
 <a href="https://makolay322.github.io/Better-Youtube/privacy.html">Privacy</a> ·
 <a href="store/LISTING.md">Store texts</a> ·
 <a href="PUBLISHING.md">Publishing guide (TR)</a></p>
 
-A Manifest V3 extension for **Chrome / Edge / Brave / Opera** and **Firefox (140+)**. Everything is configurable from the extension's **Settings** page (settings can be exported/imported as JSON). No data collection, no network requests.
+A Manifest V3 extension for **Chrome / Edge / Brave / Opera** and **Firefox (140+)**. Everything is configurable from the extension's **Settings** page (settings can be exported/imported as JSON). The interface is available in English, Türkçe, Español, Português, Deutsch, Français, Русский and 日本語 (translations live in `extension/shared/locales/`; `node tools/check-i18n.js` verifies them). No data collection, no network requests.
 
 > Formerly *Better Youtube*. Moving from a manual install to the store version? Export your settings first (Settings → Export) and import them in the new install.
 
@@ -75,4 +75,4 @@ The landing page lives in `docs/` (GitHub Pages).
 
 ## License
 
-[MIT](LICENSE). Kolay Youtube is an independent project and is not affiliated with YouTube or Google LLC.
+[MIT](LICENSE). Kolay for YouTube is an independent project and is not affiliated with YouTube or Google LLC.
