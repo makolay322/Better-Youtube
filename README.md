@@ -1,8 +1,8 @@
 <p align="center"><img src="assets/icon256.png" width="96" height="96" alt=""></p>
 <h1 align="center">Kolay for YouTube</h1>
 <p align="center">A calmer, faster YouTube — plus speed hotkeys for every video on the web.<br>
-<a href="https://makolay322.github.io/Better-Youtube/">Website</a> ·
-<a href="https://makolay322.github.io/Better-Youtube/privacy.html">Privacy</a> ·
+<a href="https://makolay322.github.io/Kolay-for-Youtube/">Website</a> ·
+<a href="https://makolay322.github.io/Kolay-for-Youtube/privacy.html">Privacy</a> ·
 <a href="store/LISTING.md">Store texts</a> ·
 <a href="PUBLISHING.md">Publishing guide (TR)</a></p>
 
@@ -12,11 +12,11 @@ A Manifest V3 extension for **Chrome / Edge / Brave / Opera** and **Firefox (140
 
 ## Install
 
-- **Chrome Web Store / Firefox Add-ons:** links will appear on the [website](https://makolay322.github.io/Better-Youtube/) once the listings are live.
+- **Chrome Web Store / Firefox Add-ons:** links will appear on the [website](https://makolay322.github.io/Kolay-for-Youtube/) once the listings are live.
 
 ### Manual install
 
-Download the package for your browser from [Releases](https://github.com/makolay322/Better-Youtube/releases) (or build it, see below).
+Download the package for your browser from [Releases](https://github.com/makolay322/Kolay-for-Youtube/releases) (or build it, see below).
 
 **Chrome / Chromium:** extract `kolay-youtube-<ver>-chrome.zip` into a permanent folder → open `chrome://extensions` → enable **Developer mode** → **Load unpacked** → select the folder. (Chrome rejects `.crx` files that don't come from the Web Store, so unpacked is the only manual option.)
 
@@ -29,7 +29,7 @@ Download the package for your browser from [Releases](https://github.com/makolay
 Load the `extension/` folder unpacked. In this mode the extension checks its own `manifest.json` every 15 minutes and reloads itself when the version changes, so a scheduled `git pull` keeps it up to date. (Store builds drop this mechanism and the `alarms` permission; stores update the extension themselves.)
 
 ```bash
-git clone https://github.com/makolay322/Better-Youtube.git
+git clone https://github.com/makolay322/Kolay-for-Youtube.git
 ```
 
 ## Build

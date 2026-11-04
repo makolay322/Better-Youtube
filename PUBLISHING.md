@@ -25,7 +25,7 @@ Mağazalar gizlilik politikası URL'si istiyor, o yüzden önce site yayında ol
 
 1. Bu branch'i `main`'e merge et.
 2. GitHub → repo **Settings → Pages** → *Source: Deploy from a branch* → **Branch: `main`**, klasör: **`/docs`** → Save.
-3. 1–2 dakika sonra: `https://makolay322.github.io/Better-Youtube/` ve `.../privacy.html` açılmalı.
+3. 1–2 dakika sonra: `https://makolay322.github.io/Kolay-for-Youtube/` ve `.../privacy.html` açılmalı.
 
 > Repo adını `Kolay-Youtube` yapmak istersen: GitHub repo yönlendirmesi yapar ama **Pages adresi yönlendirilmez**. Bu durumda `extension/manifest.json` (`homepage_url`), `docs/index.html` (og:image), `README.md` ve `store/LISTING.md` içindeki `Better-Youtube` adreslerini güncelle. Mağazaya göndermeden önce karar vermek en temizi.
 
@@ -41,7 +41,7 @@ Mağazalar gizlilik politikası URL'si istiyor, o yüzden önce site yayında ol
    - Small promo tile: `store/promo-small-440x280.png`, Marquee: `store/promo-marquee-1400x560.png` (isteğe bağlı)
    - Homepage URL / Support URL: `store/LISTING.md`'deki adresler
    - Türkçe listeleme eklemek için: Language → Turkish ekle, Türkçe açıklamayı yapıştır.
-4. **Privacy practices** sekmesi: tek amaç açıklaması, `storage` ve host izni gerekçeleri, "remote code: No" — hepsi `store/LISTING.md`'de. Veri toplama listesinde **hiçbir şeyi** işaretleme, alttaki üç beyanı işaretle. Privacy policy URL: `https://makolay322.github.io/Better-Youtube/privacy.html`
+4. **Privacy practices** sekmesi: tek amaç açıklaması, `storage` ve host izni gerekçeleri, "remote code: No" — hepsi `store/LISTING.md`'de. Veri toplama listesinde **hiçbir şeyi** işaretleme, alttaki üç beyanı işaretle. Privacy policy URL: `https://makolay322.github.io/Kolay-for-Youtube/privacy.html`
 5. **Distribution**: Public, tüm bölgeler.
 6. **Submit for review.** `<all_urls>` erişimi yüzünden inceleme genelde birkaç gün sürer (ilk gönderimde 1–3 hafta da olabilir).
 

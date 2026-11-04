@@ -29,9 +29,9 @@ The manifest is localized (`extension/_locales/*/messages.json`), so the Chrome 
 
 ## Homepage / support / privacy URLs
 
-- Homepage: `https://makolay322.github.io/Better-Youtube/`
-- Support: `https://github.com/makolay322/Better-Youtube/issues`
-- Privacy policy: `https://makolay322.github.io/Better-Youtube/privacy.html`
+- Homepage: `https://makolay322.github.io/Kolay-for-Youtube/`
+- Support: `https://github.com/makolay322/Kolay-for-Youtube/issues`
+- Privacy policy: `https://makolay322.github.io/Kolay-for-Youtube/privacy.html`
 
 ---
 
@@ -76,7 +76,7 @@ Empty Watch Later or any of your playlists with one click.
 Searchable settings page, light & dark theme, export / import as JSON. Available in English, Turkish, Spanish, Portuguese, German, French, Russian and Japanese.
 
 🔒 PRIVACY
-No data collection, no analytics, no network requests, no ads. Settings are stored only in your browser. Open source: https://github.com/makolay322/Better-Youtube
+No data collection, no analytics, no network requests, no ads. Settings are stored only in your browser. Open source: https://github.com/makolay322/Kolay-for-Youtube
 
 Why "access to all websites"? Only for the speed hotkeys, which work on videos on any site. That script just listens for your shortcut keys and changes the playback speed of <video> elements.
 
@@ -124,7 +124,7 @@ Daha Sonra İzle'yi ya da kendi listelerini tek tıkla boşalt.
 Aranabilir ayarlar sayfası, açık ve koyu tema, JSON olarak dışa / içe aktarma. Türkçe, İngilizce, İspanyolca, Portekizce, Almanca, Fransızca, Rusça ve Japonca.
 
 🔒 GİZLİLİK
-Veri toplama yok, analitik yok, ağ isteği yok, reklam yok. Ayarlar sadece tarayıcında saklanır. Açık kaynak: https://github.com/makolay322/Better-Youtube
+Veri toplama yok, analitik yok, ağ isteği yok, reklam yok. Ayarlar sadece tarayıcında saklanır. Açık kaynak: https://github.com/makolay322/Kolay-for-Youtube
 
 Neden "tüm sitelere erişim"? Sadece her sitedeki videolarda çalışan hız kısayolları için. O betik yalnızca kısayol tuşlarını dinler ve <video> öğelerinin hızını değiştirir.
 
@@ -158,7 +158,7 @@ Kolay for YouTube improves the YouTube viewing experience (hiding unwanted conte
 - **Notes to reviewer:**
 
 ```
-No build step: the files in the package are the original sources (https://github.com/makolay322/Better-Youtube, folder extension/). The content script on <all_urls> (shared/schema.js + content/speed.js) only implements keyboard speed shortcuts for <video> elements. content/main-world.js runs in the MAIN world on youtube.com because the YouTube player API (setPlaybackQualityRange) is only reachable from the page context; it communicates with the content script via window.postMessage and only accepts messages from the same window. No network requests, no remote code, no data collection.
+No build step: the files in the package are the original sources (https://github.com/makolay322/Kolay-for-Youtube, folder extension/). The content script on <all_urls> (shared/schema.js + content/speed.js) only implements keyboard speed shortcuts for <video> elements. content/main-world.js runs in the MAIN world on youtube.com because the YouTube player API (setPlaybackQualityRange) is only reachable from the page context; it communicates with the content script via window.postMessage and only accepts messages from the same window. No network requests, no remote code, no data collection.
 ```
 
 - **License:** pick the one that matches the repo (e.g. MIT) — see "Open items" in `PUBLISHING.md`.
