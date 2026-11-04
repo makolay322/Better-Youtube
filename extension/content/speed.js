@@ -8,6 +8,13 @@
 
   const KEY = 'ytxSpeed';
   let s = Object.assign({}, YTX.DEFAULTS);
+  // On-screen label; kept here so the all-sites script stays tiny (no locale files)
+  const SPEED_WORD = { en: 'Speed', tr: 'Hız', es: 'Velocidad', pt: 'Velocidade', de: 'Geschwindigkeit', fr: 'Vitesse', ru: 'Скорость', ja: '速度' };
+  function speedWord() {
+    let l = s.ui_lang;
+    if (!l || l === 'auto') { try { l = chrome.i18n.getUILanguage(); } catch (e) { l = navigator.language; } }
+    return SPEED_WORD[String(l).toLowerCase().split(/[-_]/)[0]] || SPEED_WORD.en;
+  }
   let rate = 1;
   let gen = 0;                 // bumped when the user changes speed; cancels pending automatic applies
   const seen = new WeakMap();  // video -> last applied source key
@@ -56,7 +63,7 @@
     rate = r;
     setRate(v, r);
     try { chrome.storage.local.set({ [KEY]: r }); } catch (e) { /* extension was reloaded */ }
-    osd(v, `Speed: ${r}x`);
+    osd(v, `${speedWord()}: ${r}×`);
     return true;
   }
 

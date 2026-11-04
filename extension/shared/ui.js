@@ -44,7 +44,7 @@
         return [i, out];
       }
       case 'select': {
-        const s = h('select', { id }, item.options.map(([val, lab]) => h('option', { value: val }, lab)));
+        const s = h('select', { id }, item.options.map((o) => h('option', { value: o[0] }, YTX.tr.option(item, o))));
         s.value = v;
         s.addEventListener('change', () => ctx.set(item.key, s.value));
         return s;
@@ -68,8 +68,9 @@
         return i;
       }
       case 'shortcut': {
-        const box = h('div', { class: 'keybox', tabindex: '0', role: 'textbox' });
-        const show = () => { const c = ctx.get(item.key); box.textContent = c || '(off)'; box.classList.toggle('empty', !c); };
+        const box = h('div', { class: 'keybox', tabindex: '0', role: 'textbox', id, 'aria-label': YTX.tr.label(item) });
+        box.dataset.key = item.key;
+        const show = () => { const c = ctx.get(item.key); box.textContent = c || YTX.t('ui.off', '(off)'); box.classList.toggle('empty', !c); };
         show();
         box.addEventListener('keydown', (e) => {
           e.preventDefault();
@@ -77,12 +78,12 @@
           const c = YTX.comboFromEvent(e);
           if (c) { ctx.set(item.key, c); show(); }
         });
-        box.addEventListener('focus', () => { box.textContent = 'Press a key…'; });
+        box.addEventListener('focus', () => { box.textContent = YTX.t('ui.pressKey', 'Press a key…'); });
         box.addEventListener('blur', show);
         return box;
       }
       case 'action':
-        return h('button', { class: item.danger ? 'danger' : '', onclick: () => ctx.run(item.id) }, item.label);
+        return h('button', { class: item.danger ? 'danger' : '', onclick: () => ctx.run(item.id) }, YTX.tr.label(item));
       default:
         return null;
     }

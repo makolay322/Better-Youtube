@@ -14,12 +14,16 @@
   const co = (key, label, def, desc, o) => ({ type: 'color', key, label, def, desc, ...o });
   const sc = (key, label, def, desc, o) => ({ type: 'shortcut', key, label, def, desc, ...o });
   const ac = (id, label, desc, o) => ({ type: 'action', id, label, desc, ...o });
-  const sec = (id, title, module, desc, items, group) => ({ id, title, module, desc, items, group: group || 'Other' });
-  const TOP = 'Most used';
+  const sec = (id, title, module, desc, items, group) => ({ id, title, module, desc, items, group: group || 'other' });
+  const TOP = 'top';
+  const GROUPS = { top: 'Most used', other: 'Other' };
+
+  // UI languages. Option tuples with a third element `0` are shown as-is (not translated).
+  const LANGS = [['en', 'English'], ['tr', 'Türkçe'], ['es', 'Español'], ['pt', 'Português'], ['de', 'Deutsch'], ['fr', 'Français'], ['ru', 'Русский'], ['ja', '日本語']];
 
   const QUALITIES = [
-    ['auto', 'Let YouTube decide (auto)'], ['highres', 'Highest available'], ['hd2160', '4K (2160p)'], ['hd1440', '2K (1440p)'],
-    ['hd1080', '1080p'], ['hd720', '720p'], ['large', '480p'], ['medium', '360p'], ['small', '240p'], ['tiny', '144p'],
+    ['auto', 'Let YouTube decide (auto)'], ['highres', 'Highest available'], ['hd2160', '4K (2160p)', 0], ['hd1440', '2K (1440p)', 0],
+    ['hd1080', '1080p', 0], ['hd720', '720p', 0], ['large', '480p', 0], ['medium', '360p', 0], ['small', '240p', 0], ['tiny', '144p', 0],
   ];
 
   const SCHEMA = [
@@ -93,7 +97,7 @@
       nm('p_scrollDelay', 'Wait for new videos to load (ms)', 1200, 300, 10000, 100),
       nm('p_maxLoadTries', 'Scroll attempts for new videos', 5, 1, 50, 1),
       nm('p_maxFailStreak', 'Stop after how many failures in a row', 3, 1, 50, 1),
-      tx('p_extraText', 'Extra “remove” words', '', 'For other languages, separate with |. E.g. удалить|remover'),
+      tx('p_extraText', 'Extra “remove” words', '', 'For other languages, separate with |. E.g. rimuovi|usuń'),
     ]),
 
     sec('player', 'Player (YouTube)', 'enhancer', 'Volume, captions and automatic behaviors.', [
@@ -139,7 +143,8 @@
       nm('s_volStep', 'Volume shortcut step (%)', 5, 1, 25, 1),
     ]),
 
-    sec('general', 'General', null, 'The extension’s master switch and advanced settings.', [
+    sec('general', 'General', null, 'Language, the extension’s master switch and advanced settings.', [
+      sl('ui_lang', 'Language', 'auto', [['auto', 'Automatic (browser language)']].concat(LANGS.map(([c, n]) => [c, n, 0])), 'Language of the settings page, the popup and the on-screen speed display.'),
       tg('enabled', 'Extension enabled', true, 'When off, no feature runs.', { quick: true }),
       tg('x_debug', 'Debug log', false, 'Writes [YTX] logs to the browser console.'),
       nm('x_scanMs', 'Scan interval (ms)', 250, 50, 3000, 50, 'How often page changes are scanned. Lower = faster but uses more CPU.'),
@@ -181,7 +186,7 @@
   const api = (g.chrome && g.chrome.storage && g.chrome.storage.local) || null;
 
   Object.assign(YTX, {
-    SCHEMA, DEFAULTS, ITEMS, STORE_KEY, comboFromEvent, depOk,
+    SCHEMA, DEFAULTS, ITEMS, STORE_KEY, GROUPS, LANGS, comboFromEvent, depOk,
     async loadSettings() {
       const r = await api.get(STORE_KEY);
       return Object.assign({}, DEFAULTS, r[STORE_KEY] || {});

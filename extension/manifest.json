@@ -1,9 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "Better Youtube",
-  "short_name": "Better Youtube",
-  "version": "1.2.1",
-  "description": "Configurable YouTube enhancer: site-wide video speed hotkeys, auto quality with fallback, fine-grained hiding options, repeat hider and playlist cleaner.",
+  "default_locale": "en",
+  "name": "__MSG_extName__",
+  "short_name": "__MSG_extShortName__",
+  "version": "1.3.0",
+  "description": "__MSG_extDescription__",
+  "homepage_url": "https://makolay322.github.io/Better-Youtube/",
   "minimum_chrome_version": "105",
   "permissions": [
     "storage",
@@ -16,7 +18,7 @@
     "128": "icons/icon128.png"
   },
   "action": {
-    "default_title": "Better Youtube",
+    "default_title": "__MSG_extName__",
     "default_popup": "popup/popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
