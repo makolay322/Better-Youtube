@@ -1,31 +1,54 @@
-# Better Youtube
+<p align="center"><img src="assets/icon256.png" width="96" height="96" alt=""></p>
+<h1 align="center">Kolay Youtube</h1>
+<p align="center">A calmer, faster YouTube — plus speed hotkeys for every video on the web.<br>
+<a href="https://makolay322.github.io/Better-Youtube/">Website</a> ·
+<a href="https://makolay322.github.io/Better-Youtube/privacy.html">Privacy</a> ·
+<a href="store/LISTING.md">Store texts</a> ·
+<a href="PUBLISHING.md">Publishing guide (TR)</a></p>
 
-A Chrome / Chromium / Edge / Brave extension (Manifest V3) that improves YouTube and adds site-wide video speed hotkeys. Everything is configurable from the extension's **Settings** page (settings can be exported/imported as JSON).
+A Manifest V3 extension for **Chrome / Edge / Brave / Opera** and **Firefox (140+)**. Everything is configurable from the extension's **Settings** page (settings can be exported/imported as JSON). No data collection, no network requests.
+
+> Formerly *Better Youtube*. Moving from a manual install to the store version? Export your settings first (Settings → Export) and import them in the new install.
 
 ## Install
 
-Chrome rejects `.crx` files that don't come from the Web Store (`CRX_REQUIRED_PROOF_MISSING`), so the extension is installed unpacked. It takes about a minute and is permanent.
+- **Chrome Web Store / Firefox Add-ons:** links will appear on the [website](https://makolay322.github.io/Better-Youtube/) once the listings are live.
 
-1. Download [`dist/better-youtube-1.2.1.zip`](dist/better-youtube-1.2.1.zip) (open the file on GitHub and click **Download raw file**) and extract it into a **permanent folder** (e.g. `Documents/better-youtube`). Don't delete the folder afterwards.
-2. Open `chrome://extensions` and enable **Developer mode** (top right).
-3. Click **Load unpacked** and select the extracted folder.
-4. Click the toolbar icon, then **All settings…** to open the settings page.
+### Manual install
 
-> Because the video speed hotkeys work on **all sites**, Chrome shows a "read and change data on all sites" warning at install time. The speed script only looks at `<video>` elements and key presses and sends no data anywhere.
+Download the package for your browser from [Releases](https://github.com/makolay322/Better-Youtube/releases) (or build it, see below).
 
-## Updating
+**Chrome / Chromium:** extract `kolay-youtube-<ver>-chrome.zip` into a permanent folder → open `chrome://extensions` → enable **Developer mode** → **Load unpacked** → select the folder. (Chrome rejects `.crx` files that don't come from the Web Store, so unpacked is the only manual option.)
 
-Chrome does not auto-update unpacked extensions. Two options:
+**Firefox:** open `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…** → pick `kolay-youtube-<ver>-firefox.zip`. Temporary add-ons are removed on restart; for a permanent install use the Firefox Add-ons listing.
 
-- **Chrome Web Store (easiest):** publish the extension once (one-time small developer fee). Chrome then distributes new versions automatically within a few hours.
-- **Git (free):** clone the repo and load the `extension/` folder, then schedule `git pull` in it (Task Scheduler on Windows, cron on macOS/Linux). The extension checks its own `manifest.json` every 15 minutes and reloads itself when the version changes. Bump `version` in `manifest.json` on every release. Open tabs pick up the new version after a page refresh.
+> Because the video speed hotkeys work on **all sites**, the browser shows a "read and change data on all sites" warning at install time. The speed script only looks at `<video>` elements and key presses and sends no data anywhere.
+
+### Developing from git
+
+Load the `extension/` folder unpacked. In this mode the extension checks its own `manifest.json` every 15 minutes and reloads itself when the version changes, so a scheduled `git pull` keeps it up to date. (Store builds drop this mechanism and the `alarms` permission; stores update the extension themselves.)
 
 ```bash
 git clone https://github.com/makolay322/Better-Youtube.git
-cd Better-Youtube && git pull   # schedule this; extension folder: extension/
 ```
 
-If you installed from the zip: extract the new zip over the same folder and press the reload (↻) button on `chrome://extensions`. Your settings are kept. Run `./tools/build.sh` to rebuild the zip.
+## Build
+
+```bash
+./tools/build.sh            # → dist/kolay-youtube-<ver>-{chrome,firefox,source}.zip
+./tools/build.sh --unpacked # also extracts to dist/unpacked/{chrome,firefox}
+```
+
+`tools/build.py` derives each store manifest from `extension/manifest.json` (Firefox gets `browser_specific_settings` with the add-on ID and data-collection declaration). CI (`.github/workflows/build.yml`) builds and lints with `web-ext` on every push and attaches the zips to a GitHub release when a `v*` tag is pushed.
+
+Icons and store images are generated from `assets/icon.svg` and the screenshots in `docs/img/`:
+
+```bash
+node tools/render-icons.js assets/icon.svg <out-dir>   # needs Playwright
+node tools/render-store-assets.js
+```
+
+The landing page lives in `docs/` (GitHub Pages).
 
 ## Features
 
@@ -49,3 +72,7 @@ If you installed from the zip: extract the new zip over the same folder and pres
 | Volume keys | Volume up / down |
 
 > YouTube changes its UI often. If something stops working, enable Settings → General → *Debug log* and check the console.
+
+## License
+
+[MIT](LICENSE). Kolay Youtube is an independent project and is not affiliated with YouTube or Google LLC.

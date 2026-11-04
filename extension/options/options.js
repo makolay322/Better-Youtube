@@ -90,7 +90,7 @@
   // Export / import / reset
   $('#export').addEventListener('click', () => {
     const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
-    const a = h('a', { href: URL.createObjectURL(blob), download: 'better-youtube-settings.json' });
+    const a = h('a', { href: URL.createObjectURL(blob), download: 'kolay-youtube-settings.json' });
     document.body.append(a); a.click(); a.remove();
   });
   $('#import').addEventListener('click', () => $('#file').click());

@@ -54,8 +54,8 @@
     let result = null, error = null;
     try {
       const p = player();
-      if (!p) throw new Error('player yok');
-      if (commands[m.cmd]) result = commands[m.cmd](p, ...(m.args || []));
+      if (!p) throw new Error('no player');
+      if (Object.prototype.hasOwnProperty.call(commands, m.cmd)) result = commands[m.cmd](p, ...(Array.isArray(m.args) ? m.args : []));
     } catch (err) { error = String(err && err.message || err); }
     window.postMessage({ ytxr: 1, id: m.id, result, error }, '*');
   });

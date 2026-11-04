@@ -1,8 +1,8 @@
 :root {
-  --bg: #f6f7f9; --card: #fff; --fg: #1b1d21; --muted: #6b7280; --line: #e3e6ea; --accent: #d92020; --accent-fg: #fff; --field: #fff;
+  --bg: #f6f7f9; --card: #fff; --fg: #1b1d21; --muted: #6b7280; --line: #e3e6ea; --accent: #e0245e; --accent-fg: #fff; --field: #fff;
 }
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #14161a; --card: #1e2126; --fg: #e8eaed; --muted: #9aa0a8; --line: #2e333a; --accent: #ff4a4a; --accent-fg: #14161a; --field: #14161a; }
+  :root { --bg: #14161a; --card: #1e2126; --fg: #e8eaed; --muted: #9aa0a8; --line: #2e333a; --accent: #ff5a7e; --accent-fg: #14161a; --field: #14161a; }
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
@@ -63,3 +63,5 @@ button.danger { color: var(--accent); }
   .row { grid-template-columns: 1fr; }
   .ctl { justify-content: flex-start; }
 }
+h1.brand { display: flex; align-items: center; gap: 8px; }
+h1.brand img { border-radius: 6px; flex: none; }

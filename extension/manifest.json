@@ -1,9 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Better Youtube",
-  "short_name": "Better Youtube",
-  "version": "1.2.1",
-  "description": "Configurable YouTube enhancer: site-wide video speed hotkeys, auto quality with fallback, fine-grained hiding options, repeat hider and playlist cleaner.",
+  "name": "Kolay Youtube",
+  "short_name": "Kolay Youtube",
+  "version": "1.3.0",
+  "description": "Speed hotkeys for every video, auto quality, Shorts & clutter hiding, a repeat hider and a playlist cleaner for YouTube.",
+  "homepage_url": "https://makolay322.github.io/Better-Youtube/",
   "minimum_chrome_version": "105",
   "permissions": [
     "storage",
@@ -16,7 +17,7 @@
     "128": "icons/icon128.png"
   },
   "action": {
-    "default_title": "Better Youtube",
+    "default_title": "Kolay Youtube",
     "default_popup": "popup/popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
