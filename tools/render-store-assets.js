@@ -1,4 +1,4 @@
-/* Renders store images into store/ and docs/img/og.png.
+/* Renders store listing images into dist/store/ (not committed) and docs/img/og.png.
  * Usage: node tools/render-store-assets.js   (needs Playwright; screenshots in docs/img must exist) */
 const { chromium } = require('playwright');
 const path = require('path');
@@ -27,6 +27,7 @@ const SHOTS = [
 ];
 
 (async () => {
+  fs.mkdirSync(path.join(ROOT, 'dist/store'), { recursive: true });
   const b = await chromium.launch();
   const p = await b.newPage({ deviceScaleFactor: 1 });
   const render = async (w, h, html, out) => {
@@ -44,7 +45,7 @@ const SHOTS = [
       ? `<div style="position:absolute;left:96px;top:0;bottom:0;width:640px;display:flex;flex-direction:column;justify-content:center;gap:18px">
            <img src="${img('icon.svg')}" width="88" height="88"><h1 style="font-size:58px;line-height:1.05">${title}</h1><p style="font-size:26px">${sub}</p></div>`
       : `<div style="position:absolute;left:80px;top:70px;width:1120px"><h1 style="font-size:54px;line-height:1.05">${title}</h1><p style="font-size:24px;margin-top:12px">${sub}</p></div>`;
-    await render(1280, 800, text + visual, `store/screenshots/${name}.png`);
+    await render(1280, 800, text + visual, `dist/store/screenshot-${name}.png`);
   }
 
   const tile = (w, h, iconS, titleS, subS) => `
@@ -52,8 +53,8 @@ const SHOTS = [
       <img src="${img('icon.svg')}" width="${iconS}" height="${iconS}" style="filter:drop-shadow(0 10px 20px rgba(60,0,30,.35))">
       <div style="max-width:${w * .6}px"><h1 style="font-size:${titleS}px;line-height:1.02">Kolay for YouTube</h1><p style="font-size:${subS}px;margin-top:${subS * .5}px;font-weight:500">A calmer, faster YouTube.</p></div>
     </div>`;
-  await render(440, 280, tile(440, 280, 96, 38, 17), 'store/promo-small-440x280.png');
-  await render(1400, 560, tile(1400, 560, 200, 92, 36), 'store/promo-marquee-1400x560.png');
+  await render(440, 280, tile(440, 280, 96, 38, 17), 'dist/store/promo-small-440x280.png');
+  await render(1400, 560, tile(1400, 560, 200, 92, 36), 'dist/store/promo-marquee-1400x560.png');
 
   await render(1200, 630, `
     <div style="position:absolute;left:72px;top:0;bottom:0;width:560px;display:flex;flex-direction:column;justify-content:center;gap:20px">

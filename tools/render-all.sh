@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Re-renders landing-page screenshots (WebP), store screenshots/promo tiles and og.png.
+# Re-renders landing-page screenshots (WebP), og.png and the store images (into dist/store/).
 # Needs Node + Playwright (Chromium) and Python with Pillow.
 set -euo pipefail
 cd "$(dirname "$0")/.."

@@ -1,78 +1,96 @@
 <p align="center"><img src="assets/icon256.png" width="96" height="96" alt=""></p>
 <h1 align="center">Kolay for YouTube</h1>
-<p align="center">A calmer, faster YouTube — plus speed hotkeys for every video on the web.<br>
+<p align="center"><b>A calmer, faster YouTube — plus speed hotkeys for every video on the web.</b></p>
+<p align="center">
 <a href="https://makolay322.github.io/Kolay-for-Youtube/">Website</a> ·
+<a href="#install">Install</a> ·
+<a href="#features">Features</a> ·
 <a href="https://makolay322.github.io/Kolay-for-Youtube/privacy.html">Privacy</a> ·
-<a href="store/LISTING.md">Store texts</a> ·
-<a href="PUBLISHING.md">Publishing guide (TR)</a></p>
+<a href="https://github.com/makolay322/Kolay-for-Youtube/issues">Report a problem</a>
+</p>
 
-A Manifest V3 extension for **Chrome / Edge / Brave / Opera** and **Firefox (140+)**. Everything is configurable from the extension's **Settings** page (settings can be exported/imported as JSON). The interface is available in English, Türkçe, Español, Português, Deutsch, Français, Русский and 日本語 (translations live in `extension/shared/locales/`; `node tools/check-i18n.js` verifies them). No data collection, no network requests.
+<p align="center"><img src="docs/img/og.png" width="760" alt="Kolay for YouTube settings page"></p>
 
-> Formerly *Better Youtube*. Moving from a manual install to the store version? Export your settings first (Settings → Export) and import them in the new install.
+Kolay for YouTube is a free, open-source browser extension for **Chrome, Edge, Brave, Opera, Vivaldi** and **Firefox**. Every feature has its own switch, the toolbar popup keeps the most used ones one click away, and the interface speaks English, Türkçe, Español, Português, Deutsch, Français, Русский and 日本語.
+
+- 🎚️ **Speed hotkeys on every site.** `G` preset · `R` 1× · `O` slower · `P` faster. The last speed is remembered browser-wide.
+- 🎞️ **Quality that sticks.** Pick 4K or 1080p once; if it isn't available the next best is chosen, and Premium's high-bitrate version is preferred when there is one.
+- 🧹 **A quieter feed.** Hide Shorts, Mixes, surveys, Playables, "Explore new topics", watched videos and live streams, each on its own switch.
+- 🔁 **Repeat hider.** Recommendations you've scrolled past three times disappear.
+- 🗑️ **Playlist cleaner.** Empty Watch Later or any of your own playlists with one click.
+- 🔒 **No tracking.** No servers, no analytics, no network requests. Settings stay in your browser.
 
 ## Install
 
-- **Chrome Web Store / Firefox Add-ons:** links will appear on the [website](https://makolay322.github.io/Kolay-for-Youtube/) once the listings are live.
+| Browser | |
+|---|---|
+| Chrome, Edge, Brave, Opera, Vivaldi | Chrome Web Store (link on the [website](https://makolay322.github.io/Kolay-for-Youtube/)) |
+| Firefox 140+ (desktop) | Firefox Add-ons (link on the [website](https://makolay322.github.io/Kolay-for-Youtube/)) |
 
-### Manual install
+The store versions update themselves. To install a specific version by hand, download it from [Releases](https://github.com/makolay322/Kolay-for-Youtube/releases):
 
-Download the package for your browser from [Releases](https://github.com/makolay322/Kolay-for-Youtube/releases) (or build it, see below).
+- **Chromium:** extract `kolay-for-youtube-<ver>-chrome.zip` into a permanent folder, open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked** and select the folder.
+- **Firefox:** open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on…** and pick `kolay-for-youtube-<ver>-firefox.zip`. Firefox removes temporary add-ons when it restarts.
 
-**Chrome / Chromium:** extract `kolay-youtube-<ver>-chrome.zip` into a permanent folder → open `chrome://extensions` → enable **Developer mode** → **Load unpacked** → select the folder. (Chrome rejects `.crx` files that don't come from the Web Store, so unpacked is the only manual option.)
-
-**Firefox:** open `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…** → pick `kolay-youtube-<ver>-firefox.zip`. Temporary add-ons are removed on restart; for a permanent install use the Firefox Add-ons listing.
-
-> Because the video speed hotkeys work on **all sites**, the browser shows a "read and change data on all sites" warning at install time. The speed script only looks at `<video>` elements and key presses and sends no data anywhere.
-
-### Developing from git
-
-Load the `extension/` folder unpacked. In this mode the extension checks its own `manifest.json` every 15 minutes and reloads itself when the version changes, so a scheduled `git pull` keeps it up to date. (Store builds drop this mechanism and the `alarms` permission; stores update the extension themselves.)
-
-```bash
-git clone https://github.com/makolay322/Kolay-for-Youtube.git
-```
-
-## Build
-
-```bash
-./tools/build.sh            # → dist/kolay-youtube-<ver>-{chrome,firefox,source}.zip
-./tools/build.sh --unpacked # also extracts to dist/unpacked/{chrome,firefox}
-```
-
-`tools/build.py` derives each store manifest from `extension/manifest.json` (Firefox gets `browser_specific_settings` with the add-on ID and data-collection declaration). CI (`.github/workflows/build.yml`) builds and lints with `web-ext` on every push and attaches the zips to a GitHub release when a `v*` tag is pushed.
-
-Icons and store images are generated from `assets/icon.svg` and the screenshots in `docs/img/`:
-
-```bash
-node tools/render-icons.js assets/icon.svg <out-dir>   # needs Playwright
-node tools/render-store-assets.js
-```
-
-The landing page lives in `docs/` (GitHub Pages).
+> **Why "read and change data on all websites"?** The speed hotkeys work on videos on every site. That script only listens for your shortcut keys and changes the speed of `<video>` elements. It reads nothing else and sends nothing anywhere. You can limit site access in your browser's extension settings.
 
 ## Features
 
-**Most used** (top of the settings page and the popup)
+**Most used** (top of the settings page and in the popup)
 
 | Section | What it does |
 |---|---|
-| Video speed (all sites) | `G` preset speed, `R` 1x, `O` slower, `P` faster (keys and step are configurable). The last speed is remembered browser-wide and applied to every video |
-| Video quality | If the chosen quality is unavailable it steps down automatically (4K → 2K → 1080p → …); a high-bitrate (Premium) variant is preferred when available |
-| Hiding | Shorts (everywhere) · "Explore new topics" row · surveys / YouTube Playables / other irrelevant elements · repeated videos · Mix · course and podcast playlists · watched videos · ongoing and ended live streams (Subscriptions page only) |
+| Video speed (all sites) | `G` preset speed, `R` 1×, `O` slower, `P` faster; keys and step are configurable. The last speed is remembered and applied to every video. |
+| Video quality | Steps down automatically when the chosen quality is unavailable (4K → 1440p → 1080p → …). Prefers the high-bitrate (Premium) variant. |
+| Hiding | Shorts (everywhere), "Explore new topics", surveys and Playables, repeated videos, Mixes, course and podcast playlists, watched videos, live and ended streams (Subscriptions page). |
 
-**Other** (lower in the settings)
+**More** (lower on the settings page)
 
 | Section | What it does |
 |---|---|
-| Hiding details | Watched-percentage range, upcoming premieres, members-only, duration filter, keyword / channel blocklist, extra shelf titles, dimming, excluded pages |
-| Repeat hider details | Pages it applies to, visibility threshold, retention time/count, statistics and reset |
-| Playlist cleaner | On a playlist page, click the toolbar icon and press "Clear list"; delays, limit, failure threshold, confirmation |
-| Player | Default/remembered volume, captions, disable autoplay, pause when the tab is hidden, pause other tabs, theater mode, expand description |
-| Page layout | Hide comments, recommendations, live chat, end cards, cards, watermark, shelves, info panels, ambient mode…; home grid columns; progress bar color |
-| Volume keys | Volume up / down |
+| Hiding details | Watched-percentage range, upcoming premieres, members-only, duration filter, keyword and channel blocklist (regex supported), extra shelf titles, dim instead of hide, excluded pages. |
+| Repeat hider | Pages it applies to, visibility threshold, retention, statistics and reset. |
+| Playlist cleaner | On a playlist page, click the toolbar icon and press "Clear list". Delays, limit and confirmation are configurable. |
+| Player | Default or remembered volume, captions, no autoplay, pause when the tab is hidden, pause other tabs, theater mode, expanded description. |
+| Page layout | Hide comments, recommendations, live chat, end cards, watermark, shelves, info panels and ambient mode. Set videos per row and the progress bar color. |
+| Volume keys | Volume up and down. |
 
-> YouTube changes its UI often. If something stops working, enable Settings → General → *Debug log* and check the console.
+Settings can be searched, and exported or imported as a JSON file.
+
+> YouTube changes its layout often. If something stops working, turn on **Settings → General → Debug log**, check the browser console, and [open an issue](https://github.com/makolay322/Kolay-for-Youtube/issues).
+
+## Development
+
+The extension is plain JavaScript, HTML and CSS with no bundler or build step. Load the `extension/` folder unpacked in Chrome, or run `npx web-ext run --source-dir extension` for Firefox.
+
+When loaded unpacked, the extension checks its own `manifest.json` every 15 minutes and reloads when the version changes, so `git pull` is enough to update. Store builds drop this check and the `alarms` permission.
+
+```bash
+./tools/build.sh             # dist/kolay-for-youtube-<ver>-{chrome,firefox,source}.zip
+./tools/build.sh --unpacked  # also extracts to dist/unpacked/{chrome,firefox}
+node tools/check-i18n.js     # every locale has every string
+```
+
+`tools/build.py` writes a separate manifest for each store from `extension/manifest.json`. The Firefox manifest gets the add-on ID and the data-collection declaration. CI builds, checks translations and runs `web-ext lint` on every push. Pushing a `v*` tag attaches the zips to a GitHub release.
+
+| Path | What's there |
+|---|---|
+| `extension/content/` | Content scripts: `speed.js` (all sites), YouTube features, `main-world.js` (player API) |
+| `extension/shared/` | Settings schema, i18n and translations (`locales/*.js`) |
+| `extension/options/`, `extension/popup/` | Settings page and toolbar popup |
+| `docs/` | Website and privacy policy (GitHub Pages) |
+| `tools/` | Build, translation check and image rendering (`render-all.sh`, needs Playwright) |
+
+### Releasing
+
+1. Bump `version` in `extension/manifest.json` and run `./tools/build.sh`.
+2. Upload `dist/kolay-for-youtube-<ver>-chrome.zip` to the Chrome Web Store dashboard and `dist/kolay-for-youtube-<ver>-firefox.zip` to AMO. AMO does not need the source zip because nothing is minified or bundled.
+3. Tag the commit (`git tag v<ver> && git push origin v<ver>`). CI publishes the GitHub release.
+
+### Translations
+
+UI strings live in `extension/shared/locales/<lang>.js`; English is written inline in the code (`schema.js` and the `t()` fallbacks). The store name and description are in `extension/_locales/<lang>/messages.json`. Corrections and new languages are welcome: open a pull request and make sure `node tools/check-i18n.js` passes.
 
 ## License
 
-[MIT](LICENSE). Kolay for YouTube is an independent project and is not affiliated with YouTube or Google LLC.
+[MIT](LICENSE). Kolay for YouTube is an independent project and is not affiliated with, endorsed or sponsored by YouTube or Google LLC.

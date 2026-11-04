@@ -58,6 +58,7 @@ nav.top .links a:hover { color: var(--fg); }
 .btn.secondary { background: var(--card); border-color: var(--line); box-shadow: var(--shadow); }
 .btn small { display: block; font-size: 11.5px; font-weight: 500; opacity: .8; line-height: 1.1; }
 .btn span { line-height: 1.2; text-align: left; }
+.btn.soon small { opacity: 1; font-weight: 600; letter-spacing: .01em; }
 
 /* Hero */
 .hero { position: relative; overflow: hidden; padding: 72px 0 40px; }
@@ -360,7 +361,7 @@ footer .legal { flex-basis: 100%; font-size: 12.5px; opacity: .85; }
     <div class="btns reveal" style="justify-content:center; margin-top: 32px">
       <a class="btn primary" data-store="chrome" href="#install"><svg><use href="#i-chrome"/></svg><span><small data-i18n="btn.get">Add to</small>Chrome</span></a>
       <a class="btn secondary" data-store="firefox" href="#install"><svg><use href="#i-firefox"/></svg><span><small data-i18n="btn.get">Add to</small>Firefox</span></a>
-      <a class="btn secondary" href="https://github.com/makolay322/Kolay-for-Youtube#manual-install"><svg><use href="#i-download"/></svg><span><small data-i18n="btn.or">Or install</small><span data-i18n="btn.manual">manually (.zip)</span></span></a>
+      <a class="btn secondary" href="https://github.com/makolay322/Kolay-for-Youtube#install"><svg><use href="#i-download"/></svg><span><small data-i18n="btn.or">Or install</small><span data-i18n="btn.manual">manually (.zip)</span></span></a>
     </div>
   </div>
 </section>
@@ -406,15 +407,20 @@ footer .legal { flex-basis: 100%; font-size: 12.5px; opacity: .85; }
 </footer>
 
 <script>
-/* Store links: fill these in once the listings are live. Until then the
- * buttons scroll to the install section. */
+/* Store links. While a listing isn't live yet its buttons read "Coming soon"
+ * and point to the manual install. */
 const STORES = {
-  chrome: '',   // e.g. https://chromewebstore.google.com/detail/kolay-youtube/<id>
-  firefox: '',  // e.g. https://addons.mozilla.org/firefox/addon/kolay-youtube/
+  chrome: '',   // https://chromewebstore.google.com/detail/kolay-for-youtube/<id>
+  firefox: '',  // https://addons.mozilla.org/firefox/addon/kolay-for-youtube/
 };
+const MANUAL = 'https://github.com/makolay322/Kolay-for-Youtube#install';
 document.querySelectorAll('[data-store]').forEach((a) => {
   const url = STORES[a.dataset.store];
-  if (url) { a.href = url; a.target = '_blank'; a.rel = 'noopener'; }
+  if (url) { a.href = url; a.target = '_blank'; a.rel = 'noopener'; return; }
+  a.href = MANUAL;
+  a.classList.add('soon');
+  const small = a.querySelector('small');
+  small.textContent = 'Coming soon to'; small.dataset.i18n = 'btn.soon';
 });
 // Highlight the button for the visitor's own browser
 if (/firefox/i.test(navigator.userAgent)) {
@@ -429,7 +435,7 @@ const TR = {
   'hero.pill': 'Ücretsiz · Açık kaynak · Chrome ve Firefox',
   'hero.title': 'YouTube, tam <span class="grad">istediğin</span> gibi.',
   'hero.lead': 'Webdeki her video için hız kısayolları, hep aynı kalan kalite ve Shorts’suz, tekrarsız, kalabalıksız bir akış. Tek küçük eklenti, her şey açılıp kapatılabilir.',
-  'btn.get': 'Ekle:', 'btn.or': 'Ya da', 'btn.manual': 'elle kur (.zip)',
+  'btn.get': 'Ekle:', 'btn.soon': 'Yakında:', 'btn.or': 'Ya da', 'btn.manual': 'elle kur (.zip)',
   'trust.1': 'Takip yok, reklam yok', 'trust.2': 'Sunucu yok, çevrimdışı çalışır', 'trust.3': 'Açık kaynak',
   'feat.eyebrow': 'Özellikler', 'feat.title': 'Küçük dokunuşlar, büyük fark.',
   'feat.sub': 'Sadece ihtiyacın olanı aç. Her özelliğin kendi anahtarı var; en çok kullanılanlar açılır pencerede bir tık uzağında.',

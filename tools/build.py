@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Builds store-ready packages for Chrome and Firefox from extension/.
 
-  python3 tools/build.py            -> dist/kolay-youtube-<ver>-chrome.zip
-                                       dist/kolay-youtube-<ver>-firefox.zip
-                                       dist/kolay-youtube-<ver>-source.zip  (for AMO review)
+  python3 tools/build.py            -> dist/kolay-for-youtube-<ver>-chrome.zip
+                                       dist/kolay-for-youtube-<ver>-firefox.zip
+                                       dist/kolay-for-youtube-<ver>-source.zip  (for AMO review)
 
 The manifest in extension/ is the development manifest (load unpacked from git).
 Store builds differ from it:
@@ -24,8 +24,9 @@ import zipfile
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, 'extension')
 DIST = os.path.join(ROOT, 'dist')
-SLUG = 'kolay-youtube'
+SLUG = 'kolay-for-youtube'
 
+# Never change the add-on ID: AMO ties every update and existing install to it.
 GECKO_ID = 'kolay-youtube@makolay322'
 # 128: content scripts with "world": "MAIN"; 140: data_collection_permissions without warnings
 GECKO_MIN = '140.0'
